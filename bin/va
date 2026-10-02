@@ -1,0 +1,29 @@
+#!/bin/bash
+# 语音指令助手命令行入口：va "<一句话>"
+#   VA_DRY_RUN=1  只打印将执行的动作
+#   VA_JSON=1     输出 JSON 报告
+#   VA_QUIET=1    不朗读（默认朗读简短版；unsupported/失败/需要你动手 → 不自动关闭的对话框，其余 → 通知）
+#   VA_PROXY=http://127.0.0.1:7890  直连 DeepSeek 不通时走代理（Node fetch 不读 https_proxy，这里用 NODE_USE_ENV_PROXY 打开）
+set -euo pipefail
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+# shellcheck source=bin/va-env
+. "$ROOT/bin/va-env"
+# Alfred 运行脚本时 PATH 很短，找不到版本管理器装的 node；按顺序兜底（VA_NODE 可直接指定，写进 ~/.config/voice-agent/env.sh）
+NODE="${VA_NODE:-}"
+if [ -z "$NODE" ]; then
+  for c in "$(command -v node 2>/dev/null || true)" "$HOME/.local/share/fnm/aliases/default/bin/node" "$HOME/.volta/bin/node" /opt/homebrew/bin/node /usr/local/bin/node; do
+    if [ -n "$c" ] && [ -x "$c" ]; then NODE="$c"; break; fi
+  done
+fi
+# VA_NODE 指向的文件不存在 / 不可执行 = 没有 node
+[ -n "$NODE" ] && [ ! -x "$NODE" ] && NODE=""
+[ -z "$NODE" ] && { echo "[va] 找不到 node（需要 Node.js 22.18+）" >&2; exit 127; }
+# 版本太低时 .ts 跑不起来，会报一串看不懂的语法错误：先拦下来，退出码 125（Sesame 据此显示「需要 Node 22.18+」）
+if ! "$NODE" -e 'const [a,b]=process.versions.node.split(".").map(Number); process.exit(a>22||(a===22&&b>=18)?0:1)' 2>/dev/null; then
+  echo "[va] Node 版本太低：$("$NODE" -v 2>/dev/null)，需要 22.18+" >&2; exit 125
+fi
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:$PATH"
+if [ -n "${VA_PROXY:-}" ]; then
+  export NODE_USE_ENV_PROXY=1 HTTPS_PROXY="$VA_PROXY" HTTP_PROXY="$VA_PROXY"
+fi
+exec "$NODE" --no-warnings "$ROOT/src/cli.ts" "$@"

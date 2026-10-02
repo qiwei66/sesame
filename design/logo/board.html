@@ -1,0 +1,98 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Sesame Logo Board</title>
+<style>
+@font-face { font-family: "SesameRounded"; src: url("file:///System/Library/Fonts/SFNSRounded.ttf"); font-weight: 100 900; }
+:root { --bg: #F4F4F6; --card: #FFFFFF; --t1: #1C1C20; --t2: #55555E; --t3: #8A8A93; --hair: rgba(28,28,40,.08); }
+* { box-sizing: border-box; }
+body { margin: 0; width: 1600px; height: 900px; background: var(--bg); font-family: -apple-system, "PingFang SC", sans-serif; color: var(--t1); -webkit-font-smoothing: antialiased; }
+header { padding: 40px 56px 0; display: flex; align-items: baseline; gap: 14px; }
+header h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+header span { font-size: 14px; color: var(--t3); }
+main { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 28px 56px 56px; }
+.dir { background: var(--card); border-radius: 24px; box-shadow: 0 0 0 0.5px var(--hair), 0 10px 30px -18px rgba(30,30,60,.25); padding: 28px 26px 26px; display: flex; flex-direction: column; }
+.hero { height: 250px; display: grid; place-items: center; }
+.hero img { width: 230px; height: 230px; }
+.sizes { display: flex; align-items: flex-end; gap: 14px; height: 140px; padding-top: 6px; border-top: 0.5px solid var(--hair); position: relative; }
+.sizes .s128 { width: 128px; height: 128px; } .sizes .s32 { width: 32px; height: 32px; margin-bottom: 4px; } .sizes .s16 { width: 16px; height: 16px; margin-bottom: 4px; }
+.sizes .lbl { position: absolute; right: 0; bottom: 4px; font-size: 11px; color: var(--t3); }
+.bars { display: grid; gap: 8px; margin-top: 18px; }
+.bar { height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end; gap: 14px; padding: 0 12px; font-size: 13px; }
+.bar img { width: 18px; height: 18px; order: -1; }
+.bar .clock { order: 0; }
+.bar.light { background: linear-gradient(90deg, #DCE5F3, #F1E4DD); color: rgba(0,0,0,.85); }
+.bar.light img { opacity: .85; }
+.bar.dark { background: linear-gradient(90deg, #151A30, #2A1B28); color: rgba(255,255,255,.92); }
+.bar.dark img { filter: invert(1); opacity: .92; }
+.word { margin-top: 26px; font-size: 44px; line-height: 1; color: var(--t1); }
+.wlbl { margin-top: 8px; font-size: 12px; color: var(--t3); }
+h2 { margin: 22px 0 0; font-size: 16px; font-weight: 600; display: flex; align-items: baseline; gap: 8px; }
+h2 span { font-size: 13px; font-weight: 400; color: var(--t3); }
+.w-a-gate { font-family: -apple-system, "SF Pro Display", sans-serif; font-weight: 600; letter-spacing: -0.012em; }
+.w-b-keyhole { font-family: -apple-system, "SF Pro Text", sans-serif; font-weight: 500; letter-spacing: 0.02em; }
+.w-c-seed { font-family: "SesameRounded", ui-rounded, sans-serif; font-weight: 600; letter-spacing: -0.008em; }
+.w-d-voice-arch { font-family: -apple-system, "SF Pro Display", sans-serif; font-weight: 700; letter-spacing: -0.022em; }
+
+p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.55; color: var(--t2); }
+</style></head><body>
+<header><h1>Sesame 标志方向</h1><span>每个方向包含 App 图标、菜单栏模板图标（浅色与深色菜单栏）、字标</span></header>
+<main>
+  <section class="dir">
+    <div class="hero"><img src="a-gate/app-icon.svg" alt=""></div>
+    <div class="sizes">
+      <img class="s128" src="a-gate/app-icon.svg" alt=""><img class="s32" src="a-gate/app-icon.svg" alt=""><img class="s16" src="a-gate/app-icon.svg" alt="">
+      <span class="lbl">128 / 32 / 16 pt</span>
+    </div>
+    <div class="bars">
+      <div class="bar light"><span class="clock">21:14</span><img src="a-gate/menubar.svg" alt=""></div>
+      <div class="bar dark"><span class="clock">21:14</span><img src="a-gate/menubar.svg" alt=""></div>
+    </div>
+    <div class="word w-a-gate">Sesame</div>
+    <div class="wlbl">SF Pro Display Semibold</div>
+    <h2>朱门<span>Gate ajar</span></h2>
+    <p>推开一条缝的朱红大门：要找的产物就在门后。</p>
+  </section>
+  <section class="dir">
+    <div class="hero"><img src="b-keyhole/app-icon.svg" alt=""></div>
+    <div class="sizes">
+      <img class="s128" src="b-keyhole/app-icon.svg" alt=""><img class="s32" src="b-keyhole/app-icon.svg" alt=""><img class="s16" src="b-keyhole/app-icon.svg" alt="">
+      <span class="lbl">128 / 32 / 16 pt</span>
+    </div>
+    <div class="bars">
+      <div class="bar light"><span class="clock">21:14</span><img src="b-keyhole/menubar.svg" alt=""></div>
+      <div class="bar dark"><span class="clock">21:14</span><img src="b-keyhole/menubar.svg" alt=""></div>
+    </div>
+    <div class="word w-b-keyhole">Sesame</div>
+    <div class="wlbl">SF Pro Text Medium，略放宽字距</div>
+    <h2>钥匙孔<span>Keyhole light</span></h2>
+    <p>门后亮着灯：说出口的那句话就是钥匙。</p>
+  </section>
+  <section class="dir">
+    <div class="hero"><img src="c-seed/app-icon.svg" alt=""></div>
+    <div class="sizes">
+      <img class="s128" src="c-seed/app-icon.svg" alt=""><img class="s32" src="c-seed/app-icon.svg" alt=""><img class="s16" src="c-seed/app-icon.svg" alt="">
+      <span class="lbl">128 / 32 / 16 pt</span>
+    </div>
+    <div class="bars">
+      <div class="bar light"><span class="clock">21:14</span><img src="c-seed/menubar.svg" alt=""></div>
+      <div class="bar dark"><span class="clock">21:14</span><img src="c-seed/menubar.svg" alt=""></div>
+    </div>
+    <div class="word w-c-seed">sesame</div>
+    <div class="wlbl">SF Pro Rounded Semibold，全小写</div>
+    <h2>芝麻<span>One seed</span></h2>
+    <p>一粒芝麻很小，却能开门：小工具，一句话的事。</p>
+  </section>
+  <section class="dir">
+    <div class="hero"><img src="d-voice-arch/app-icon.svg" alt=""></div>
+    <div class="sizes">
+      <img class="s128" src="d-voice-arch/app-icon.svg" alt=""><img class="s32" src="d-voice-arch/app-icon.svg" alt=""><img class="s16" src="d-voice-arch/app-icon.svg" alt="">
+      <span class="lbl">128 / 32 / 16 pt</span>
+    </div>
+    <div class="bars">
+      <div class="bar light"><span class="clock">21:14</span><img src="d-voice-arch/menubar.svg" alt=""></div>
+      <div class="bar dark"><span class="clock">21:14</span><img src="d-voice-arch/menubar.svg" alt=""></div>
+    </div>
+    <div class="word w-d-voice-arch">Sesame</div>
+    <div class="wlbl">SF Pro Display Bold，收紧字距</div>
+    <h2>说话的门<span>Speaking arch</span></h2>
+    <p>门的轮廓就是一个对话气泡：说出来，门就开了。</p>
+  </section>
+</main></body></html>

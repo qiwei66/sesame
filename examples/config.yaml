@@ -1,0 +1,12 @@
+# Copy to ~/.config/voice-agent/config.yaml. All fields optional; see docs/config.md.
+locale: auto
+user_name: ''
+provider: deepseek
+providers:
+  deepseek:
+    key:
+      - env: DEEPSEEK_API_KEY
+      - keychain: { service: voice-agent.deepseek }
+sources: [claude, codex]
+known_urls: []
+prompt_rules: []

@@ -1,0 +1,7 @@
+# Copy to ~/.config/voice-agent/commands.yaml; see docs/commands.md.
+commands:
+  - id: uptime_info
+    name: Uptime
+    description: How long this Mac has been running
+    examples: [how long has my mac been up]
+    command: [uptime]

@@ -1,0 +1,92 @@
+#!/bin/bash
+# va-setup：语音助手一键安装 / 修复（幂等，重复跑无副作用）。新电脑上只需要跑这一条，外加点一次辅助功能授权。
+#   1. 编译、打包成 bin/VA AutoEnter.app 并用固定身份签名（scripts/build-autoenter.sh，找不到身份直接失败）
+#   2. ~/.local/bin 软链：va / va-index / va-autoenter-setup / va-setup
+#   3. launchd：$VA_BUNDLE_PREFIX.va-index（每 30 分钟增量索引）、$VA_BUNDLE_PREFIX.va-autoenter（常驻）
+#   4. 索引不存在就跑一次全量
+#   5. Alfred workflow（文件法装入，不弹导入框）+ fallback 第一位 + 主热键 ⌘Space
+#   6. 助手未授权就打开辅助功能面板（va-autoenter-setup）
+# 选项：--no-alfred 跳过第 5 步；--no-hotkey 不改 Alfred 主热键；--no-auth-prompt 未授权时只提示不打开面板（无人值守/自动化用）
+set -euo pipefail
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+UID_N="$(id -u)"
+# shellcheck source=bin/va-env
+. "$ROOT/bin/va-env"
+P="$VA_BUNDLE_PREFIX"
+NO_ALFRED=0; NO_HOTKEY=0; NO_AUTH=0
+for a in "$@"; do
+  case "$a" in --no-alfred) NO_ALFRED=1 ;; --no-hotkey) NO_HOTKEY=1 ;; --no-auth-prompt) NO_AUTH=1 ;; esac
+done
+say() { printf '[va-setup] %s\n' "$*"; }
+
+# ── 0. 依赖 ──
+command -v node >/dev/null || [ -n "${VA_NODE:-}" ] || { say "缺 node（需要 v22.18+）"; exit 1; }
+command -v swiftc >/dev/null || { say "缺 swiftc：先装 Xcode Command Line Tools（xcode-select --install）"; exit 1; }
+mkdir -p "$ROOT/logs" "$ROOT/index" "$HOME/.local/bin" "$HOME/Library/LaunchAgents"
+chmod 700 "$ROOT/index"
+
+# ── 1. 编译签名 ──
+say "1/6 编译并签名 va-autoenter"
+bash "$ROOT/scripts/build-autoenter.sh"
+# 旧版裸二进制（按路径授权、会被 cdhash 钉死）不再使用
+rm -f "$ROOT/bin/va-autoenter"
+
+# ── 2. 软链 ──
+say "2/6 ~/.local/bin 软链"
+for b in va va-index va-autoenter-setup va-setup; do
+  ln -sfn "$ROOT/bin/$b" "$HOME/.local/bin/$b"
+done
+
+# ── 3. launchd ──
+say "3/6 launchd"
+for name in va-index va-autoenter; do
+  label="$P.$name"
+  src="$ROOT/launchd/$name.plist"
+  dst="$HOME/Library/LaunchAgents/$label.plist"
+  tmp="$(mktemp)"
+  sed -e "s#__ROOT__#$ROOT#g" -e "s#__HOME__#$HOME#g" -e "s#__PREFIX__#$P#g" "$src" > "$tmp"
+  plutil -lint "$tmp" >/dev/null
+  if ! cmp -s "$tmp" "$dst" 2>/dev/null; then
+    mv "$tmp" "$dst"
+    launchctl bootout "gui/$UID_N/$label" 2>/dev/null || true
+    launchctl bootstrap "gui/$UID_N" "$dst"
+    say "   已装/更新 $label"
+  else
+    rm -f "$tmp"
+    launchctl print "gui/$UID_N/$label" >/dev/null 2>&1 || launchctl bootstrap "gui/$UID_N" "$dst"
+  fi
+done
+launchctl kickstart -k "gui/$UID_N/$P.va-autoenter"
+
+# ── 4. 首次索引 ──
+if [ ! -s "$ROOT/index/items.json" ]; then
+  say "4/6 首次全量索引（约 1 分钟）"
+  "$ROOT/bin/va-index" --full | tail -1
+else
+  say "4/6 索引已存在，跑一次增量"
+  "$ROOT/bin/va-index" | tail -1
+fi
+
+# ── 5. Alfred ──
+if [ "$NO_ALFRED" = 0 ]; then
+  say "5/6 Alfred workflow / fallback / 主热键"
+  (cd "$ROOT" && node --no-warnings scripts/build-alfred.ts >/dev/null)
+  NO_HOTKEY="$NO_HOTKEY" python3 "$ROOT/scripts/alfred-install.py" "$ROOT/dist/build/info.plist" \
+    || say "   Alfred 安装后自检没通过：跑 va doctor 看是哪一环"
+else
+  say "5/6 跳过 Alfred（--no-alfred）"
+fi
+
+# ── 6. 授权 ──
+sleep 2
+if tail -20 "$ROOT/logs/va-autoenter.log" 2>/dev/null | grep "accessibility_trusted=" | tail -1 | grep -q "=true"; then
+  say "6/6 辅助功能已授权，全部就绪"
+else
+  if [ "$NO_AUTH" = 1 ]; then
+    say "6/6 VA AutoEnter 还没有辅助功能授权：运行 va-autoenter-setup 完成授权"
+  else
+    say "6/6 VA AutoEnter 还没有辅助功能授权 → 打开授权面板（把访达里选中的「VA AutoEnter」拖进列表并打开开关）"
+    "$ROOT/bin/va-autoenter-setup" || true
+  fi
+fi
+say "完成。⌘Space → 按住 Fn 说话 → 松开即执行。说明见 $ROOT/README.md"

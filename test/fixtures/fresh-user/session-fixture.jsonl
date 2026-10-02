@@ -1,0 +1,3 @@
+{"type": "user", "timestamp": "2026-09-30T09:00:00.000Z", "message": {"role": "user", "content": "帮我做一个汇率换算表，再起一个本机的看板"}}
+{"type": "assistant", "timestamp": "2026-09-30T09:05:00.000Z", "message": {"role": "assistant", "content": [{"type": "text", "text": "做好了：\n- [汇率换算表](https://claude.ai/artifact/Fx7Demo0Rate0Table0Abc1)\n- 本机看板：[Demo 汇率看板](http://127.0.0.1:47391)\n- 报告文件：/tmp/sesame-fixture-does-not-exist/report.md"}]}}
+{"type": "assistant", "timestamp": "2026-10-01T10:00:00.000Z", "message": {"role": "assistant", "content": [{"type": "text", "text": "汇率接口文档：\n\nhttps://fxdemo.dev/rates/board\n\nhttps://fxdemo-mirror.dev/"}]}}

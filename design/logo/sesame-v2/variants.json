@@ -1,0 +1,26 @@
+{
+  "1-real": {
+    "name": "写实修形",
+    "en": "True seed",
+    "meaning": "真实的黑芝麻：一头尖、一头圆，一条细棱线就是它的名片。",
+    "word": 600
+  },
+  "2-seam-light": {
+    "name": "门缝芝麻",
+    "en": "Open seam",
+    "meaning": "芝麻沿棱线裂开一道缝，里面透出暖光：种子在开，门也在开。",
+    "word": 600
+  },
+  "3-white": {
+    "name": "白芝麻",
+    "en": "Ivory seed",
+    "meaning": "一粒象牙白的芝麻放在朱红上：柔和、温暖，像一块芝麻糖。",
+    "word": 600
+  },
+  "4-night-open": {
+    "name": "夜里开的门",
+    "en": "Night seam",
+    "meaning": "深色底上一粒白芝麻裂开一线光：夜里亮起的那扇门，16px 也认得出。",
+    "word": 600
+  }
+}

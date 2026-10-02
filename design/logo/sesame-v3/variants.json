@@ -1,0 +1,20 @@
+{
+  "a-graphite-ridge": {
+    "name": "石墨 · 浮雕棱",
+    "en": "Graphite, embossed",
+    "meaning": "近黑的底上一粒象牙白芝麻，棱线只靠一侧亮一侧暗隆起来。",
+    "word": 600
+  },
+  "b-vermilion-ridge": {
+    "name": "朱红 · 浮雕棱",
+    "en": "Vermilion, embossed",
+    "meaning": "朱红的底上一粒象牙白芝麻，同样的浮雕棱线，更暖、更像一枚印章。",
+    "word": 600
+  },
+  "c-graphite-pure": {
+    "name": "石墨 · 纯粹",
+    "en": "Graphite, pure",
+    "meaning": "只留一粒有体积的白芝麻，不画棱线：最安静的版本。",
+    "word": 600
+  }
+}

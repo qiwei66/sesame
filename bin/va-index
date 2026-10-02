@@ -1,0 +1,23 @@
+#!/bin/bash
+# 索引器：va-index [--full]，扫 ~/.claude/projects 里的链接与产物，写 index/items.json
+#   VA_DRY_RUN=1  只打印将执行的动作
+#   VA_JSON=1     输出 JSON 报告
+#   VA_QUIET=1    不朗读（默认朗读简短版；unsupported/失败/需要你动手 → 不自动关闭的对话框，其余 → 通知）
+#   VA_PROXY=http://127.0.0.1:7890  直连 DeepSeek 不通时走代理（Node fetch 不读 https_proxy，这里用 NODE_USE_ENV_PROXY 打开）
+set -euo pipefail
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+# shellcheck source=bin/va-env
+. "$ROOT/bin/va-env"
+# Alfred 运行脚本时 PATH 很短，找不到版本管理器装的 node；按顺序兜底（VA_NODE 可直接指定，写进 ~/.config/voice-agent/env.sh）
+NODE="${VA_NODE:-}"
+if [ -z "$NODE" ]; then
+  for c in "$(command -v node 2>/dev/null || true)" "$HOME/.local/share/fnm/aliases/default/bin/node" "$HOME/.volta/bin/node" /opt/homebrew/bin/node /usr/local/bin/node; do
+    if [ -n "$c" ] && [ -x "$c" ]; then NODE="$c"; break; fi
+  done
+fi
+[ -z "$NODE" ] && { echo "[va] 找不到 node" >&2; exit 127; }
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:$PATH"
+if [ -n "${VA_PROXY:-}" ]; then
+  export NODE_USE_ENV_PROXY=1 HTTPS_PROXY="$VA_PROXY" HTTP_PROXY="$VA_PROXY"
+fi
+exec "$NODE" --no-warnings "$ROOT/src/index-cli.ts" "$@"

@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sesame Prototype</title>
+<style>
+/* ==========================================================================
+   Sesame (芝麻开门) interactive prototype
+   Material note: the panel glass is a web approximation of macOS vibrancy
+   (backdrop-filter + layered borders). It is not Apple's Liquid Glass API.
+   ========================================================================== */
+
+:root {
+  /* type */
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* brand: taken from the app icon tile. Graphite + ivory, no hue accent. */
+  --accent: #34323A;             /* graphite: verb, waveform, caret, mark */
+  --accent-sheen: #A9A4AE;       /* the one-time sheen across the mark */
+  --accent-soft: rgba(52, 50, 58, 0.55);
+
+  /* neutrals (light) */
+  --text-1: #1C1C20;
+  --text-2: #45454D;
+  --text-3: #66666F;
+  --text-4: #8C8C95;
+  --hair: rgba(28, 28, 40, 0.09);
+  --hair-strong: rgba(28, 28, 40, 0.14);
+  --glass: rgba(246, 246, 249, 0.72);
+  --glass-edge: rgba(255, 255, 255, 0.70);
+  --glass-rim: rgba(20, 20, 40, 0.14);
+  --card: rgba(255, 255, 255, 0.58);
+  --card-edge: rgba(255, 255, 255, 0.85);
+  --chip: rgba(28, 28, 40, 0.055);
+  --chip-edge: rgba(28, 28, 40, 0.08);
+  --sel: rgba(28, 28, 40, 0.065);
+  --track: rgba(28, 28, 40, 0.08);
+  --fill: #2A2A30;
+  --on-fill: #FAFAFC;
+  --focus-ring: rgba(28, 28, 40, 0.16);
+  --danger: #C02A1F;
+  --skeleton: rgba(28, 28, 40, 0.07);
+  --kbd: rgba(255, 255, 255, 0.75);
+  --kbd-edge: rgba(28, 28, 40, 0.13);
+  --shadow-panel: 0 30px 80px -12px rgba(28, 36, 72, 0.32), 0 10px 24px -8px rgba(28, 36, 72, 0.18);
+  --menubar-text: rgba(18, 18, 24, 0.88);
+  --menubar-hl: rgba(18, 18, 24, 0.12);
+
+  /* wallpaper (light: dawn ridge) */
+  --wall-top: #B9CDEB;
+  --wall-mid: #E9D9D3;
+  --wall-low: #F4C7AE;
+  --wall-sun: rgba(255, 214, 186, 0.95);
+  --wall-dune-a: #E8A58C;
+  --wall-dune-b: #9FB6E3;
+  --wall-dune-c: #6F86C6;
+
+  /* geometry: one radius scale, concentric from the panel inward */
+  --r-panel: 26px;
+  --r-card: 16px;
+  --r-row: 12px;
+  --r-tile: 10px;
+  --r-chip: 8px;
+  --r-kbd: 5px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-sheen: cubic-bezier(0.65, 0, 0.35, 1);
+  --t-fast: 140ms;
+  --t-med: 260ms;
+  --t-sheen: 900ms;
+}
+
+:root[data-theme="dark"] {
+  --accent: #EFE6D8;             /* ivory, the seed itself */
+  --accent-sheen: #FFFFFF;
+  --accent-soft: rgba(239, 230, 216, 0.55);
+
+  --text-1: #F4F4F6;
+  --text-2: #C9C9D1;
+  --text-3: #A0A0AA;
+  --text-4: #7A7A85;
+  --hair: rgba(255, 255, 255, 0.08);
+  --hair-strong: rgba(255, 255, 255, 0.13);
+  --glass: rgba(30, 30, 36, 0.64);
+  --glass-edge: rgba(255, 255, 255, 0.14);
+  --glass-rim: rgba(0, 0, 0, 0.55);
+  --card: rgba(255, 255, 255, 0.055);
+  --card-edge: rgba(255, 255, 255, 0.08);
+  --chip: rgba(255, 255, 255, 0.08);
+  --chip-edge: rgba(255, 255, 255, 0.07);
+  --sel: rgba(255, 255, 255, 0.085);
+  --track: rgba(255, 255, 255, 0.10);
+  --fill: #ECECF0;
+  --on-fill: #1C1C20;
+  --focus-ring: rgba(255, 255, 255, 0.20);
+  --danger: #FF6B5E;
+  --skeleton: rgba(255, 255, 255, 0.08);
+  --kbd: rgba(255, 255, 255, 0.10);
+  --kbd-edge: rgba(255, 255, 255, 0.14);
+  --shadow-panel: 0 30px 90px -10px rgba(0, 0, 0, 0.65), 0 10px 28px -8px rgba(0, 0, 0, 0.45);
+  --menubar-text: rgba(255, 255, 255, 0.92);
+  --menubar-hl: rgba(255, 255, 255, 0.18);
+
+  /* wallpaper (dark: night ridge) */
+  --wall-top: #0A1024;
+  --wall-mid: #161B3A;
+  --wall-low: #2A1B2E;
+  --wall-sun: rgba(255, 120, 84, 0.42);
+  --wall-dune-a: #3A2036;
+  --wall-dune-b: #1C2B55;
+  --wall-dune-c: #0F1838;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--font-ui);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  background: var(--wall-top);
+  overflow: hidden;
+  font-feature-settings: "kern";
+}
+.sprite { position: absolute; width: 0; height: 0; }
+.i { width: 1em; height: 1em; fill: currentColor; flex: none; }
+
+/* ---------- desktop / wallpaper ---------- */
+.desktop { position: fixed; inset: 0; overflow: hidden; }
+.wall {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(60% 50% at 64% 30%, var(--wall-sun), transparent 70%),
+    linear-gradient(180deg, var(--wall-top) 0%, var(--wall-mid) 52%, var(--wall-low) 100%);
+  transition: opacity var(--t-med) var(--ease-out);
+}
+.dune { position: absolute; border-radius: 50%; }
+/* ridges: soft-edged ellipses stacked like a dawn landscape */
+.dune.d { width: 90vw; height: 70vh; left: -30vw; top: -6vh; background: radial-gradient(closest-side, var(--wall-dune-b), transparent); opacity: .5; }
+.dune.a { width: 190vw; height: 120vh; left: -70vw; top: 56vh; background: radial-gradient(closest-side, var(--wall-dune-a) 0 93%, transparent 100%); opacity: .75; }
+.dune.b { width: 170vw; height: 110vh; left: 5vw; top: 70vh; background: radial-gradient(closest-side, var(--wall-dune-b) 0 92%, transparent 100%); opacity: .9; }
+.dune.c { width: 220vw; height: 110vh; left: -80vw; top: 86vh; background: radial-gradient(closest-side, var(--wall-dune-c) 0 92%, transparent 100%); opacity: .95; }
+.grain {
+  position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- menubar ---------- */
+.menubar {
+  position: absolute; top: 0; left: 0; right: 0; height: 28px;
+  display: flex; align-items: center; padding: 0 10px 0 18px;
+  font-size: 13px; color: var(--menubar-text); letter-spacing: -0.01em;
+  z-index: 3;
+}
+.menubar .apps { display: flex; gap: 2px; align-items: center; }
+.menubar .apps span { padding: 3px 9px; border-radius: 6px; }
+.menubar .apps .app-name { font-weight: 700; }
+.menubar .status { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.menubar .status .si {
+  height: 22px; min-width: 30px; padding: 0 7px; border-radius: 6px;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 15px;
+  transition: background var(--t-fast) var(--ease-out);
+}
+.menubar .status .si.on { background: var(--menubar-hl); }
+.menubar .clock { padding: 0 8px; font-variant-numeric: tabular-nums; font-size: 13px; }
+
+/* the Sesame mark: the v3 seed silhouette with its ridge cut out (same path as logo/final/menubar.svg) */
+.mark { width: 22px; height: 22px; flex: none; color: var(--accent); display: block; overflow: visible; }
+.mark .sheen { fill: var(--accent-sheen); opacity: 0; transform: translateX(-12px) skewX(-18deg); transform-box: view-box; }
+.mark.shine .sheen { animation: sheen var(--t-sheen) var(--ease-sheen) 120ms both; }
+@keyframes sheen { 0% { opacity: 0; transform: translateX(-12px) skewX(-18deg); } 25% { opacity: .9; } 100% { opacity: 0; transform: translateX(14px) skewX(-18deg); } }
+.shot .mark .sheen { animation: none; opacity: 0; }
+.menubar .mark { width: 18px; height: 18px; color: var(--menubar-text); }
+
+/* ---------- panel ---------- */
+.panel {
+  position: absolute; left: 50%; top: 21vh; width: 660px; margin-left: -330px;
+  border-radius: var(--r-panel);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(44px) saturate(185%);
+  backdrop-filter: blur(44px) saturate(185%);
+  box-shadow: var(--shadow-panel), 0 0 0 0.5px var(--glass-rim), inset 0 0.5px 0 var(--glass-edge), inset 0 0 0 0.5px var(--glass-edge);
+  z-index: 2;
+  transform-origin: 50% 0;
+}
+.panel.hidden { opacity: 0; transform: scale(.985) translateY(-6px); pointer-events: none;
+  transition: opacity var(--t-med) var(--ease-out), transform var(--t-med) var(--ease-out); }
+.panel.summon { animation: summon 180ms var(--ease-out) both; }
+@keyframes summon { from { opacity: 0; transform: scale(.99); } to { opacity: 1; transform: none; } }
+
+
+.input-row {
+  height: 60px; display: flex; align-items: center; gap: 14px; padding: 0 22px 0 22px;
+  position: relative;
+}
+.lead { position: relative; width: 22px; height: 22px; display: grid; place-items: center; flex: none; }
+.lead > * { grid-area: 1 / 1; transition: opacity var(--t-fast) var(--ease-out), transform var(--t-med) var(--ease-out); }
+.lead .wave { display: flex; align-items: center; gap: 2.5px; height: 20px; opacity: 0; transform: scale(.6); }
+.lead .wave i { width: 2.5px; height: 20px; border-radius: 2px; background: var(--accent); transform: scaleY(.25); }
+.listening .lead .mark { opacity: 0; transform: scale(.6); }
+.listening .lead .wave { opacity: 1; transform: scale(1); }
+.listening .lead .wave i { animation: wave 1.1s var(--ease-out) infinite; }
+.lead .wave i:nth-child(1) { animation-delay: -.30s; }
+.lead .wave i:nth-child(2) { animation-delay: -.75s; }
+.lead .wave i:nth-child(3) { animation-delay: -.10s; }
+.lead .wave i:nth-child(4) { animation-delay: -.55s; }
+.lead .wave i:nth-child(5) { animation-delay: -.90s; }
+@keyframes wave { 0%,100% { transform: scaleY(.22); } 45% { transform: scaleY(1); } 70% { transform: scaleY(.5); } }
+.shot .listening .lead .wave i { animation: none; }
+.shot .listening .lead .wave i:nth-child(1) { transform: scaleY(.38); }
+.shot .listening .lead .wave i:nth-child(2) { transform: scaleY(.80); }
+.shot .listening .lead .wave i:nth-child(3) { transform: scaleY(1); }
+.shot .listening .lead .wave i:nth-child(4) { transform: scaleY(.56); }
+.shot .listening .lead .wave i:nth-child(5) { transform: scaleY(.30); }
+
+.q {
+  flex: 1; min-width: 0; font-size: 17px; line-height: 24px; color: var(--text-2);
+  letter-spacing: -0.012em; outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  caret-color: var(--accent);
+}
+.q .interim { color: var(--text-4); }
+.q .caret { display: inline-block; width: 2px; height: 20px; margin-left: 1px; vertical-align: -4px; border-radius: 1px; background: var(--accent); animation: blink 1s steps(1) infinite; }
+.shot .q .caret { animation: none; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.listen-hint { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 6px; opacity: 0; transition: opacity var(--t-fast); }
+.listening .listen-hint { opacity: 1; }
+
+/* indeterminate seam under the input while resolving */
+.pending-line { position: absolute; left: 22px; right: 22px; bottom: -0.5px; height: 1.5px; overflow: hidden; opacity: 0; transition: opacity var(--t-fast); }
+.pending-line::after { content: ""; position: absolute; top: 0; bottom: 0; width: 30%; left: 35%;
+  background: linear-gradient(90deg, transparent, var(--accent-soft), transparent); animation: sweep 1.2s var(--ease-sheen) infinite; }
+.resolving .pending-line { opacity: 1; }
+.shot .pending-line::after { animation: none; }
+@keyframes sweep { from { transform: translateX(-160%); } to { transform: translateX(160%); } }
+
+.body-wrap { overflow: hidden; transition: height var(--t-med) var(--ease-out); }
+.body { padding: 0 12px 12px; }
+.body:empty { padding: 0; }
+.divider { height: 0.5px; background: var(--hair-strong); margin: 0 22px; }
+.body > .stage { animation: stageIn var(--t-med) var(--ease-out) both; }
+@keyframes stageIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.shot .body > .stage, .shot .panel.summon { animation: none; }
+
+/* ---------- intent preview ---------- */
+.intent {
+  display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px;
+  font-size: 12.5px; color: var(--text-3); letter-spacing: -0.005em;
+}
+.intent .verb { color: var(--accent); font-weight: 600; }
+.intent .sep { font-size: 10px; color: var(--text-4); }
+.intent .target { color: var(--text-2); font-weight: 500; }
+.kind {
+  display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 7px;
+  border-radius: 6px; font-size: 11.5px; font-weight: 500; color: var(--text-3);
+  background: var(--chip); box-shadow: inset 0 0 0 0.5px var(--chip-edge);
+}
+.kind .i { font-size: 12px; }
+
+/* ---------- result: opened ---------- */
+.opened {
+  display: flex; align-items: center; gap: 14px; padding: 12px 12px 12px 10px;
+  border-radius: var(--r-card); background: var(--card); box-shadow: inset 0 0 0 0.5px var(--card-edge);
+}
+.tile {
+  width: 46px; height: 46px; border-radius: 12px; flex: none; position: relative; overflow: hidden;
+  display: grid; place-items: center; font-size: 24px;
+}
+.tile.dash { color: #fff; background: linear-gradient(160deg, #3A4256, #1E2230); box-shadow: inset 0 0.5px 0 rgba(255,255,255,.25), 0 2px 6px -2px rgba(20,24,40,.4); }
+:root[data-theme="dark"] .tile.dash { background: linear-gradient(160deg, #5B6788, #333B55); box-shadow: inset 0 0.5px 0 rgba(255,255,255,.35), 0 2px 8px -2px rgba(0,0,0,.6); }
+.opened .txt { flex: 1; min-width: 0; }
+.opened .title { font-size: 19px; line-height: 24px; font-weight: 600; letter-spacing: -0.02em; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.opened .title .done { color: var(--text-3); font-weight: 500; margin-right: 6px; }
+.opened .sub { margin-top: 3px; font-size: 12.5px; line-height: 16px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.opened .sub .url { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.opened .sub .dot { margin: 0 6px; color: var(--text-4); }
+
+/* ---------- skeleton (resolving) ---------- */
+.skel { display: flex; align-items: center; gap: 14px; padding: 12px 12px 12px 10px; border-radius: var(--r-card); }
+.skel .b { background: var(--skeleton); border-radius: 6px; }
+.skel .tileb { width: 46px; height: 46px; border-radius: 12px; }
+.skel .lines { flex: 1; display: grid; gap: 8px; }
+.skel .l1 { height: 14px; width: 42%; }
+.skel .l2 { height: 10px; width: 64%; }
+
+/* ---------- info card ---------- */
+.info {
+  border-radius: var(--r-card); background: var(--card); box-shadow: inset 0 0 0 0.5px var(--card-edge);
+  padding: 14px 16px 16px;
+}
+.info .head { display: flex; align-items: center; gap: 10px; }
+.info .head .ic { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font-size: 16px; color: var(--text-2); background: var(--chip); }
+.info .head .name { font-size: 13.5px; font-weight: 600; color: var(--text-1); }
+.info .head .meta { font-size: 12px; color: var(--text-3); }
+.info .big { margin-top: 14px; display: flex; align-items: baseline; gap: 8px; }
+.info .big .n { font-size: 40px; line-height: 44px; font-weight: 600; letter-spacing: -0.035em; font-variant-numeric: tabular-nums; color: var(--text-1); }
+.info .big .u { font-size: 17px; font-weight: 500; color: var(--text-2); }
+.info .big .of { font-size: 13px; color: var(--text-3); margin-left: 2px; }
+.info .big .of b { font-weight: 500; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.bar { margin-top: 12px; height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: 3px; background: var(--fill); transform-origin: left; animation: grow 700ms var(--ease-out) 120ms both; }
+.shot .bar > i { animation: none; }
+@keyframes grow { from { transform: scaleX(0); } }
+.info .foot { margin-top: 10px; display: flex; font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.info .foot .r { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; }
+.info .foot b { font-weight: 500; color: var(--text-2); }
+
+/* ---------- candidate list ---------- */
+.list { display: grid; gap: 2px; }
+.row {
+  display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 12px 0 10px;
+  border-radius: var(--r-row); transition: background var(--t-fast) var(--ease-out);
+}
+.row.sel { background: var(--sel); box-shadow: inset 0 0 0 0.5px var(--hair); }
+.fav { width: 34px; height: 34px; border-radius: var(--r-tile); flex: none; display: grid; place-items: center; font-size: 17px; font-weight: 700; position: relative; }
+.fav.site { color: #F5EFE6; background: linear-gradient(160deg, #2E6B57, #1C4A3B); font-size: 16px; letter-spacing: 0; box-shadow: inset 0 0.5px 0 rgba(255,255,255,.2); }
+.fav.claude { color: #A4552F; background: #F3E7DC; box-shadow: inset 0 0 0 0.5px rgba(120, 70, 40, .14); }
+:root[data-theme="dark"] .fav.claude { color: #F0A07A; background: #3A2A22; box-shadow: inset 0 0 0 0.5px rgba(255,255,255,.08); }
+.fav.local { color: var(--text-1); background: var(--card); box-shadow: inset 0 0 0 0.5px var(--hair-strong); }
+.row .txt { flex: 1; min-width: 0; }
+.row .t { font-size: 14.5px; line-height: 19px; font-weight: 500; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .d { margin-top: 2px; font-family: var(--font-mono); font-size: 11.5px; line-height: 15px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .d .hl { color: var(--text-2); }
+.row .ret { width: 22px; height: 20px; display: grid; place-items: center; opacity: 0; }
+.row.sel .ret { opacity: 1; }
+kbd {
+  display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px;
+  border-radius: var(--r-kbd); font-family: var(--font-ui); font-size: 11px; font-weight: 500; color: var(--text-2);
+  background: var(--kbd); box-shadow: inset 0 0 0 0.5px var(--kbd-edge), 0 0.5px 0 var(--kbd-edge);
+}
+kbd .i { font-size: 12px; }
+.list .row { animation: rowIn var(--t-med) var(--ease-out) both; }
+.list .row:nth-child(2) { animation-delay: 45ms; }
+.list .row:nth-child(3) { animation-delay: 90ms; }
+.bar > i.w-disk { width: 16.2%; }
+@keyframes rowIn { from { opacity: 0; transform: translateY(5px); } }
+.shot .list .row { animation: none; }
+
+/* ---------- confirm ---------- */
+.confirm { border-radius: var(--r-card); background: var(--card); box-shadow: inset 0 0 0 0.5px var(--card-edge); padding: 16px; }
+.confirm .top { display: flex; gap: 14px; }
+.confirm .tile { background: var(--chip); color: var(--danger); box-shadow: inset 0 0 0 0.5px var(--chip-edge); }
+.confirm h3 { margin: 1px 0 0; font-size: 16px; line-height: 22px; font-weight: 600; letter-spacing: -0.015em; }
+.confirm p { margin: 3px 0 0; font-size: 13px; line-height: 19px; color: var(--text-2); }
+.confirm p b { font-weight: 600; color: var(--text-1); font-variant-numeric: tabular-nums; }
+.files { margin: 14px 0 0 60px; display: flex; flex-wrap: nowrap; gap: 6px; }
+.file {
+  display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px; border-radius: var(--r-chip);
+  font-size: 12px; color: var(--text-2); background: var(--chip); box-shadow: inset 0 0 0 0.5px var(--chip-edge);
+}
+.file { white-space: nowrap; flex: none; }
+.file .sz { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
+.file.more { color: var(--text-3); background: transparent; box-shadow: inset 0 0 0 0.5px var(--hair-strong); }
+.actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px; }
+.btn {
+  height: 32px; padding: 0 12px 0 14px; border-radius: 9px; border: 0; font: inherit; font-size: 13px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 8px; cursor: default;
+}
+.btn.ghost { color: var(--danger); background: var(--chip); box-shadow: inset 0 0 0 0.5px var(--chip-edge); }
+.btn:focus, .btn:focus-visible { outline: none; }
+.btn.default { color: var(--on-fill); background: var(--fill); box-shadow: 0 0 0 3px var(--focus-ring); }
+.btn.default kbd { background: rgba(255,255,255,.16); color: inherit; box-shadow: none; }
+:root[data-theme="dark"] .btn.default kbd { background: rgba(0,0,0,.10); }
+.btn.ghost kbd { color: var(--text-3); }
+
+/* ---------- not found ---------- */
+.miss { border-radius: var(--r-card); background: var(--card); box-shadow: inset 0 0 0 0.5px var(--card-edge); padding: 14px 16px 16px; }
+.miss .msg { font-size: 15px; line-height: 21px; font-weight: 600; letter-spacing: -0.01em; }
+.miss .steps { margin: 12px 0 0; display: grid; grid-template-columns: 74px 1fr; row-gap: 10px; font-size: 13px; line-height: 19px; }
+.miss .steps dt { color: var(--text-3); }
+.miss .steps dd { margin: 0; color: var(--text-2); }
+.miss .steps dd b { font-weight: 500; color: var(--text-1); }
+.miss .steps dd .ask { color: var(--text-1); }
+
+/* ---------- menubar menu ---------- */
+.menu {
+  position: absolute; top: 32px; left: 0; width: 300px; padding: 6px;
+  border-radius: 14px; background: var(--glass);
+  -webkit-backdrop-filter: blur(40px) saturate(185%); backdrop-filter: blur(40px) saturate(185%);
+  box-shadow: 0 18px 50px -10px rgba(20, 28, 60, .32), 0 0 0 0.5px var(--glass-rim), inset 0 0 0 0.5px var(--glass-edge);
+  font-size: 13px; z-index: 4; transform-origin: 85% 0;
+  opacity: 0; transform: scale(.97) translateY(-4px); pointer-events: none;
+  transition: opacity var(--t-fast) var(--ease-out), transform var(--t-med) var(--ease-out);
+}
+:root[data-theme="dark"] .menu { box-shadow: 0 18px 50px -10px rgba(0,0,0,.6), 0 0 0 0.5px var(--glass-rim), inset 0 0 0 0.5px var(--glass-edge); }
+.menu.show { opacity: 1; transform: none; pointer-events: auto; }
+.menu .sec { padding: 6px 10px 4px; font-size: 11.5px; font-weight: 600; color: var(--text-3); }
+.menu .mi { display: flex; align-items: center; gap: 9px; height: 28px; padding: 0 10px; border-radius: 7px; color: var(--text-1); }
+.menu .mi .i { font-size: 15px; color: var(--text-2); }
+.menu .mi .lbl { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.menu .mi .r { color: var(--text-3); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.menu .sepline { height: 0.5px; background: var(--hair-strong); margin: 5px 10px; }
+.menu .stat { display: flex; align-items: center; height: 28px; padding: 0 10px; color: var(--text-2); gap: 9px; }
+.menu .stat .i { font-size: 15px; color: var(--text-3); }
+.menu .stat .r { margin-left: auto; color: var(--text-1); font-weight: 500; font-variant-numeric: tabular-nums; }
+.menu .stat .r.muted { color: var(--text-3); font-weight: 400; }
+.menu .stat .ok { color: var(--text-3); font-size: 13px; }
+.menu .short { color: var(--text-3); font-size: 12px; letter-spacing: .02em; }
+
+/* ---------- prototype hud (hidden in screenshots) ---------- */
+.hud {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 5;
+  display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 12px;
+  background: var(--glass); -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: 0 0 0 0.5px var(--glass-rim), inset 0 0 0 0.5px var(--glass-edge), 0 8px 24px -10px rgba(0,0,0,.3);
+  font-size: 12px; color: var(--text-2);
+}
+.hud button { font: inherit; border: 0; background: transparent; color: inherit; height: 26px; min-width: 26px; padding: 0 8px; border-radius: 7px; cursor: pointer; }
+.hud button.on { background: var(--sel); color: var(--text-1); font-weight: 600; }
+.hud .gap { width: 0.5px; height: 16px; background: var(--hair-strong); margin: 0 4px; }
+.shot .hud { display: none; }
+.shot .grain { display: none; } /* still PNGs: grain triples file size and is invisible after compression */
+
+
+/* ---------- placeholder ---------- */
+.q:empty::before { content: attr(data-ph); color: var(--text-4); }
+
+/* ---------- first run (state 4) ---------- */
+.intro { padding: 18px 10px 4px; }
+.intro .headline { font-size: 34px; line-height: 42px; font-weight: 600; letter-spacing: -0.03em; color: var(--text-1); }
+.intro .count { margin-top: 8px; font-size: 17px; line-height: 30px; color: var(--text-2); }
+.intro .count .n { font-size: 24px; font-weight: 600; color: var(--text-1); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.intro .srcrow { margin-top: 6px; display: flex; align-items: center; gap: 8px; }
+.intro .src { font-size: 12.5px; color: var(--text-3); }
+.intro .share { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; font: inherit; font-size: 12.5px; font-weight: 500; color: var(--accent);
+  background: var(--chip); border: 0; height: 26px; padding: 0 10px; border-radius: var(--r-chip); box-shadow: inset 0 0 0 0.5px var(--chip-edge); cursor: default; }
+.intro .share .i { font-size: 12px; }
+/* share card (state c): the exported 1200×675 image, laid out at half size and scaled up for the shot */
+.sharecard { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(1.5); width: 600px; height: 337.5px; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(10,10,30,.35); background: #F6F5F2; color: #1C1C20; padding: 36px 44px 32px; display: none; flex-direction: column; }
+.sharecard.show { display: flex; }
+:root[data-theme="dark"] .sharecard { background: #1E1E24; color: #F4F4F6; }
+.sharecard .logo { width: 56px; height: 56px; border-radius: 12.5px; background: #34323A; display: grid; place-items: center; color: #EFE6D8; }
+.sharecard .logo svg { width: 30px; height: 30px; }
+.sharecard .h { margin-top: auto; font-size: 32px; line-height: 38px; font-weight: 600; letter-spacing: -0.025em; max-width: 500px; }
+.sharecard .h b { color: #34323A; font-weight: 600; } :root[data-theme="dark"] .sharecard .h b { color: #EFE6D8; }
+.sharecard .g { margin-top: 20px; display: flex; gap: 7px; }
+.sharecard .g span { white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 9px; border-radius: 7px; font-size: 11px; color: #45454D;
+  background: rgba(255,255,255,.75); box-shadow: inset 0 0 0 0.5px rgba(28,28,40,.08); }
+.sharecard .g span .i { font-size: 11px; } .sharecard .g b { font-size: 13px; color: #1C1C20; }
+:root[data-theme="dark"] .sharecard .g span { color: #C9C9D1; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,.09); }
+:root[data-theme="dark"] .sharecard .g b { color: #F4F4F6; }
+.sharecard .f { margin-top: auto; display: flex; gap: 7px; font-size: 11px; color: #66666F; } .sharecard .f b { color: inherit; font-size: 11px; }
+:root[data-theme="dark"] .sharecard .f { color: #A0A0AA; }
+.sharecard .f .u { font-family: var(--font-mono); font-size: 10px; }
+.cats { margin-top: 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cat { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 14px 0 12px; border-radius: var(--r-row);
+  background: var(--card); box-shadow: inset 0 0 0 0.5px var(--card-edge); }
+.cat .i { font-size: 18px; color: var(--text-2); }
+.cat .k { font-size: 13.5px; color: var(--text-2); }
+.cat .c { margin-left: auto; font-size: 17px; font-weight: 600; color: var(--text-1); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.try { margin-top: 12px; display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 12px 0 14px; border-radius: var(--r-row);
+  background: var(--sel); box-shadow: inset 0 0 0 0.5px var(--hair); }
+.try .lbl { font-size: 13px; color: var(--text-3); }
+.try .t { font-size: 15.5px; font-weight: 500; color: var(--text-1); letter-spacing: -0.01em; }
+.try kbd { margin-left: auto; }
+.cats .cat, .try { animation: rowIn var(--t-med) var(--ease-out) both; }
+.cats .cat:nth-child(2) { animation-delay: 40ms; } .cats .cat:nth-child(3) { animation-delay: 80ms; }
+.cats .cat:nth-child(4) { animation-delay: 120ms; } .cats .cat:nth-child(5) { animation-delay: 160ms; }
+.cats .cat:nth-child(6) { animation-delay: 200ms; } .try { animation-delay: 900ms; }
+.shot .cats .cat, .shot .try { animation: none; }
+
+/* ---------- live results while typing (state t) ---------- */
+.live { display: grid; gap: 2px; padding-top: 8px; }
+.live .row { animation: none; }
+.live.grow .row { animation: rowIn 160ms var(--ease-out) both; }
+.live.grow .row:nth-child(2) { animation-delay: 25ms; } .live.grow .row:nth-child(3) { animation-delay: 50ms; } .live.grow .row:nth-child(4) { animation-delay: 75ms; }
+.shot .live.grow .row { animation: none; }
+.fav.dash { color: #fff; font-size: 17px; background: linear-gradient(160deg, #3A4256, #1E2230); box-shadow: inset 0 0.5px 0 rgba(255,255,255,.25); }
+:root[data-theme="dark"] .fav.dash { background: linear-gradient(160deg, #5B6788, #333B55); }
+.fav.seek { color: var(--accent); background: var(--chip); box-shadow: inset 0 0 0 0.5px var(--chip-edge); }
+.fav.seek .mark { width: 18px; height: 18px; }
+
+/* ---------- hold-to-talk hint ---------- */
+.hold-hint { display: none; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); }
+.holding .hold-hint { display: flex; }
+.holding .listen-hint { display: none; }
+kbd.down { background: var(--sel); box-shadow: inset 0 1px 1.5px rgba(0,0,0,.18); transform: translateY(0.5px); }
+
+/* ---------- neutral secondary button ---------- */
+.btn.plain { color: var(--text-1); background: var(--chip); box-shadow: inset 0 0 0 0.5px var(--chip-edge); }
+.ask { border-radius: var(--r-card); background: var(--card); box-shadow: inset 0 0 0 0.5px var(--card-edge); padding: 16px; }
+.ask .top { display: flex; gap: 14px; }
+.ask .tile { background: var(--chip); color: var(--accent); box-shadow: inset 0 0 0 0.5px var(--chip-edge); }
+.ask h3 { margin: 1px 0 0; font-size: 16px; line-height: 22px; font-weight: 600; letter-spacing: -0.015em; }
+.ask p { margin: 3px 0 0; font-size: 13px; line-height: 19px; color: var(--text-2); }
+
+/* ---------- first-run takeover: use ⌘Space? (states k / k2 / k3) ---------- */
+.ask .note { margin: 4px 0 0; font-size: 12px; line-height: 17px; color: var(--text-3); }
+.ask .note b { font-weight: 500; color: var(--text-2); }
+.ask.done .tile { color: var(--accent); }
+
+/* ---------- settings window (state s) ---------- */
+.settings { position: absolute; left: 50%; top: 18vh; width: 560px; margin-left: -280px; border-radius: 18px;
+  background: var(--glass); -webkit-backdrop-filter: blur(44px) saturate(185%); backdrop-filter: blur(44px) saturate(185%);
+  box-shadow: var(--shadow-panel), 0 0 0 0.5px var(--glass-rim), inset 0 0 0 0.5px var(--glass-edge);
+  z-index: 2; opacity: 0; transform: scale(.985); pointer-events: none; transition: opacity var(--t-med) var(--ease-out), transform var(--t-med) var(--ease-out); }
+.settings.show { opacity: 1; transform: none; pointer-events: auto; }
+.settings .titlebar { height: 52px; display: flex; align-items: center; padding: 0 18px; position: relative; }
+.settings .lights { display: flex; gap: 8px; }
+.settings .lights i { width: 12px; height: 12px; border-radius: 50%; background: var(--hair-strong); }
+.settings .title { position: absolute; left: 0; right: 0; text-align: center; font-size: 13px; font-weight: 600; color: var(--text-1); pointer-events: none; }
+.settings .content { padding: 4px 20px 22px; }
+.group { border-radius: 12px; background: var(--card); box-shadow: inset 0 0 0 0.5px var(--card-edge); }
+.pref { display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 12px 14px 12px 16px; }
+.pref .txt { flex: 1; min-width: 0; }
+.pref .t { font-size: 13.5px; font-weight: 500; color: var(--text-1); }
+.pref .d { margin-top: 2px; font-size: 12px; line-height: 17px; color: var(--text-3); }
+.switch { width: 38px; height: 22px; border-radius: 11px; background: var(--track); position: relative; flex: none; transition: background var(--t-fast) var(--ease-out); }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #FAFAFC;
+  box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 0 0 0.5px rgba(0,0,0,.06); transition: transform var(--t-fast) var(--ease-out); }
+.switch.on { background: var(--accent); }
+.switch.on::after { transform: translateX(16px); }
+:root[data-theme="dark"] .switch.on::after { background: #26252B; }
+
+
+/* ---------- hotkey taken notice on the first run ---------- */
+.taken { margin-top: 10px; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 6px 0 12px; font-size: 12.5px; color: var(--text-2); }
+.taken .i { font-size: 15px; color: var(--text-3); }
+.taken .link { margin-left: auto; font: inherit; font-size: 12.5px; font-weight: 500; color: var(--accent); background: var(--chip);
+  border: 0; height: 26px; padding: 0 10px; border-radius: var(--r-chip); box-shadow: inset 0 0 0 0.5px var(--chip-edge); cursor: default; }
+
+/* ---------- promo frame: neutral graphite backdrop for marketing crops (?promo=1) ---------- */
+.promo .wall { background: radial-gradient(70% 60% at 50% 38%, #3A3840, #1B1A1F 70%, #121115); }
+.promo .dune, .promo .grain, .promo .menubar { display: none; }
+:root:not([data-theme="dark"]) .promo .wall { background: radial-gradient(70% 60% at 50% 38%, #F3F3F5, #E4E4E8 70%, #D9D9DE); } /* light promo: neutral grey */
+:root:not([data-theme="dark"]) body.promo { --glass: rgba(247, 247, 249, 0.95); --card: rgba(255, 255, 255, 0.85); --card-edge: rgba(28, 28, 40, 0.06); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0ms !important; transition-duration: 1ms !important; }
+  .listening .lead .wave i { animation: none; transform: scaleY(.6); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .panel, .menu, .hud { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  :root { --glass: #F1F1F4; } :root[data-theme="dark"] { --glass: #232328; }
+}
+</style>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true"><!-- Icons: Phosphor Icons v2.1.1, MIT License, phosphoricons.com --><symbol id="i-chart-line-up" viewBox="0 0 256 256"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z"/></symbol><symbol id="i-hard-drives" viewBox="0 0 256 256"><path d="M208,136H48a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V152A16,16,0,0,0,208,136Zm0,64H48V152H208v48Zm0-160H48A16,16,0,0,0,32,56v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V56A16,16,0,0,0,208,40Zm0,64H48V56H208v48ZM192,80a12,12,0,1,1-12-12A12,12,0,0,1,192,80Zm0,96a12,12,0,1,1-12-12A12,12,0,0,1,192,176Z"/></symbol><symbol id="i-battery-high" viewBox="0 0 256 256"><path d="M200,56H32A24,24,0,0,0,8,80v96a24,24,0,0,0,24,24H200a24,24,0,0,0,24-24V80A24,24,0,0,0,200,56Zm8,120a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H200a8,8,0,0,1,8,8ZM144,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Zm-40,0v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM64,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Zm192,0v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Z"/></symbol><symbol id="i-microphone" viewBox="0 0 256 256"><path d="M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V240a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z"/></symbol><symbol id="i-file-text" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/></symbol><symbol id="i-globe-simple" viewBox="0 0 256 256"><path d="M128,24h0A104,104,0,1,0,232,128,104.12,104.12,0,0,0,128,24Zm87.62,96H175.79C174,83.49,159.94,57.67,148.41,42.4A88.19,88.19,0,0,1,215.63,120ZM96.23,136h63.54c-2.31,41.61-22.23,67.11-31.77,77C118.45,203.1,98.54,177.6,96.23,136Zm0-16C98.54,78.39,118.46,52.89,128,43c9.55,9.93,29.46,35.43,31.77,77Zm11.36-77.6C96.06,57.67,82,83.49,80.21,120H40.37A88.19,88.19,0,0,1,107.59,42.4ZM40.37,136H80.21c1.82,36.51,15.85,62.33,27.38,77.6A88.19,88.19,0,0,1,40.37,136Zm108,77.6c11.53-15.27,25.56-41.09,27.38-77.6h39.84A88.19,88.19,0,0,1,148.41,213.6Z"/></symbol><symbol id="i-sparkle" viewBox="0 0 256 256"><path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z"/></symbol><symbol id="i-terminal-window" viewBox="0 0 256 256"><path d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"/></symbol><symbol id="i-trash" viewBox="0 0 256 256"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></symbol><symbol id="i-arrow-elbow-down-left" viewBox="0 0 256 256"><path d="M200,32V176a8,8,0,0,1-8,8H67.31l34.35,34.34a8,8,0,0,1-11.32,11.32l-48-48a8,8,0,0,1,0-11.32l48-48a8,8,0,0,1,11.32,11.32L67.31,168H184V32a8,8,0,0,1,16,0Z"/></symbol><symbol id="i-clock" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></symbol><symbol id="i-gear" viewBox="0 0 256 256"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"/></symbol><symbol id="i-power" viewBox="0 0 256 256"><path d="M120,128V48a8,8,0,0,1,16,0v80a8,8,0,0,1-16,0Zm60.37-78.7a8,8,0,0,0-8.74,13.4C194.74,77.77,208,101.57,208,128a80,80,0,0,1-160,0c0-26.43,13.26-50.23,36.37-65.3a8,8,0,0,0-8.74-13.4C47.9,67.38,32,96.06,32,128a96,96,0,0,0,192,0C224,96.06,208.1,67.38,180.37,49.3Z"/></symbol><symbol id="i-wifi-high" viewBox="0 0 256 256"><path d="M140,204a12,12,0,1,1-12-12A12,12,0,0,1,140,204ZM237.08,87A172,172,0,0,0,18.92,87,8,8,0,0,0,29.08,99.37a156,156,0,0,1,197.84,0A8,8,0,0,0,237.08,87ZM205,122.77a124,124,0,0,0-153.94,0A8,8,0,0,0,61,135.31a108,108,0,0,1,134.06,0,8,8,0,0,0,11.24-1.3A8,8,0,0,0,205,122.77Zm-32.26,35.76a76.05,76.05,0,0,0-89.42,0,8,8,0,0,0,9.42,12.94,60,60,0,0,1,70.58,0,8,8,0,1,0,9.42-12.94Z"/></symbol><symbol id="i-magnifying-glass" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></symbol><symbol id="i-caret-right" viewBox="0 0 256 256"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></symbol><symbol id="i-file" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"/></symbol><symbol id="i-folder-simple" viewBox="0 0 256 256"><path d="M216,72H130.67L102.93,51.2a16.12,16.12,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V200a16,16,0,0,0,16,16H216.89A15.13,15.13,0,0,0,232,200.89V88A16,16,0,0,0,216,72Zm0,128H40V64H93.33L123.2,86.4A8,8,0,0,0,128,88h88Z"/></symbol><symbol id="i-check" viewBox="0 0 256 256"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></symbol><symbol id="i-arrow-up" viewBox="0 0 256 256"><path d="M205.66,117.66a8,8,0,0,1-11.32,0L136,59.31V216a8,8,0,0,1-16,0V59.31L61.66,117.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0l72,72A8,8,0,0,1,205.66,117.66Z"/></symbol><symbol id="i-arrow-down" viewBox="0 0 256 256"><path d="M205.66,149.66l-72,72a8,8,0,0,1-11.32,0l-72-72a8,8,0,0,1,11.32-11.32L120,196.69V40a8,8,0,0,1,16,0V196.69l58.34-58.35a8,8,0,0,1,11.32,11.32Z"/></symbol><symbol id="i-sliders-horizontal" viewBox="0 0 256 256"><path d="M40,88H73a32,32,0,0,0,62,0h81a8,8,0,0,0,0-16H135a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16Zm64-24A16,16,0,1,1,88,80,16,16,0,0,1,104,64ZM216,168H199a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16h97a32,32,0,0,0,62,0h17a8,8,0,0,0,0-16Zm-48,24a16,16,0,1,1,16-16A16,16,0,0,1,168,192Z"/></symbol><symbol id="i-hard-drive" viewBox="0 0 256 256"><path d="M224,64H32A16,16,0,0,0,16,80v96a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V80A16,16,0,0,0,224,64Zm0,112H32V80H224v96Zm-24-48a12,12,0,1,1-12-12A12,12,0,0,1,200,128Z"/></symbol><symbol id="i-x" viewBox="0 0 256 256"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></symbol><symbol id="i-command" viewBox="0 0 256 256"><path d="M180,144H160V112h20a36,36,0,1,0-36-36V96H112V76a36,36,0,1,0-36,36H96v32H76a36,36,0,1,0,36,36V160h32v20a36,36,0,1,0,36-36ZM160,76a20,20,0,1,1,20,20H160ZM56,76a20,20,0,0,1,40,0V96H76A20,20,0,0,1,56,76ZM96,180a20,20,0,1,1-20-20H96Zm16-68h32v32H112Zm68,88a20,20,0,0,1-20-20V160h20a20,20,0,0,1,0,40Z"/></symbol><symbol id="i-presentation-chart" viewBox="0 0 256 256"><path d="M216,40H136V24a8,8,0,0,0-16,0V40H40A16,16,0,0,0,24,56V176a16,16,0,0,0,16,16H79.36L57.75,219a8,8,0,0,0,12.5,10l29.59-37h56.32l29.59,37a8,8,0,1,0,12.5-10l-21.61-27H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,136H40V56H216V176ZM104,120v24a8,8,0,0,1-16,0V120a8,8,0,0,1,16,0Zm32-16v40a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm32-16v56a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Z"/></symbol><symbol id="i-git-pull-request" viewBox="0 0 256 256"><path d="M104,64A32,32,0,1,0,64,95v66a32,32,0,1,0,16,0V95A32.06,32.06,0,0,0,104,64ZM56,64A16,16,0,1,1,72,80,16,16,0,0,1,56,64ZM88,192a16,16,0,1,1-16-16A16,16,0,0,1,88,192Zm120-31V110.63a23.85,23.85,0,0,0-7-17L163.31,56H192a8,8,0,0,0,0-16H144a8,8,0,0,0-8,8V96a8,8,0,0,0,16,0V67.31L189.66,105a8,8,0,0,1,2.34,5.66V161a32,32,0,1,0,16,0Zm-8,47a16,16,0,1,1,16-16A16,16,0,0,1,200,208Z"/></symbol><symbol id="i-keyboard" viewBox="0 0 256 256"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></symbol><symbol id="i-battery-high-fill" viewBox="0 0 256 256"><path d="M152,96v64a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V96a8,8,0,0,1,8-8h96A8,8,0,0,1,152,96Zm72-16v96a24,24,0,0,1-24,24H32A24,24,0,0,1,8,176V80A24,24,0,0,1,32,56H200A24,24,0,0,1,224,80Zm-16,0a8,8,0,0,0-8-8H32a8,8,0,0,0-8,8v96a8,8,0,0,0,8,8H200a8,8,0,0,0,8-8Zm40,8a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,248,88Z"/></symbol><symbol id="i-wifi-high-fill" viewBox="0 0 256 256"><path d="M244.35,92.8l-104,125.43A15.93,15.93,0,0,1,128,224h0a15.93,15.93,0,0,1-12.31-5.77L11.65,92.8A15.65,15.65,0,0,1,8.11,80.91,15.93,15.93,0,0,1,14.28,70.1,186.67,186.67,0,0,1,128,32,186.67,186.67,0,0,1,241.72,70.1a15.93,15.93,0,0,1,6.17,10.81A15.65,15.65,0,0,1,244.35,92.8Z"/></symbol></svg>
+<div class="desktop" id="desktop">
+  <div class="wall"></div>
+  <div class="dune d"></div><div class="dune a"></div><div class="dune b"></div><div class="dune c"></div>
+  <div class="grain"></div>
+
+  <header class="menubar">
+    <div class="apps" id="apps"></div>
+    <div class="status">
+      <span class="si" id="mbSesame" title="Sesame"><svg class="mark" id="mbMark" viewBox="0 0 18 18" aria-hidden="true"><defs><clipPath id="mbMarkClip"><path d="M9.00,0.70 C9.53,1.53 13.45,5.68 13.45,10.99 C13.45,14.31 11.49,17.30 9.00,17.30 C6.51,17.30 4.55,14.31 4.55,10.99 C4.55,5.68 8.47,1.53 9.00,0.70 Z M9.00,4.02 C9.60,7.09 9.60,10.16 9.54,10.16 C9.54,13.05 9.18,14.98 9.00,14.98 C8.82,14.98 8.46,13.05 8.46,10.16 C8.40,10.16 8.40,7.09 9.00,4.02 Z" clip-rule="evenodd" transform="rotate(-18 9 9)"/></clipPath></defs><g clip-path="url(#mbMarkClip)"><rect width="18" height="18" fill="currentColor"/><rect class="sheen" x="6" y="-4" width="5" height="26"/></g></svg></span>
+      <span class="si"><svg class="i"><use href="#i-battery-high-fill"/></svg></span>
+      <span class="si"><svg class="i"><use href="#i-wifi-high"/></svg></span>
+      <span class="si"><svg class="i"><use href="#i-magnifying-glass"/></svg></span>
+      <span class="si"><svg class="i"><use href="#i-sliders-horizontal"/></svg></span>
+      <span class="clock" id="clock"></span>
+    </div>
+  </header>
+
+  <nav class="menu" id="menu" aria-label="Sesame">
+    <div class="sec">最近</div>
+    <div class="mi"><svg class="i"><use href="#i-chart-line-up"/></svg><span class="lbl">交易大盘</span><span class="r">2 分钟前</span></div>
+    <div class="mi"><svg class="i"><use href="#i-hard-drives"/></svg><span class="lbl">磁盘空间</span><span class="r">38 分钟前</span></div>
+    <div class="mi"><svg class="i"><use href="#i-file-text"/></svg><span class="lbl">竞品调研报告</span><span class="r">今天 15:02</span></div>
+    <div class="mi"><svg class="i"><use href="#i-sparkle"/></svg><span class="lbl">Q3 复盘图表</span><span class="r">昨天</span></div>
+    <div class="mi"><svg class="i"><use href="#i-file-text"/></svg><span class="lbl">供应商比价表.md</span><span class="r">周一</span></div>
+    <div class="sepline"></div>
+    <div class="stat"><svg class="i"><use href="#i-folder-simple"/></svg><span>索引 2,708 条</span><span class="r muted">2 分钟前更新</span></div>
+    <div class="sepline"></div>
+    <div class="mi"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">设置…</span><span class="short">⌘ ,</span></div>
+    <div class="mi"><svg class="i"><use href="#i-power"/></svg><span class="lbl">退出 Sesame</span><span class="short">⌘ Q</span></div>
+  </nav>
+
+  <section class="panel" id="panel" role="dialog" aria-label="Sesame">
+    <div class="input-row" id="inputRow">
+      <div class="lead">
+        <svg class="mark" id="mark" viewBox="0 0 18 18" aria-hidden="true"><defs><clipPath id="markClip"><path d="M9.00,0.70 C9.53,1.53 13.45,5.68 13.45,10.99 C13.45,14.31 11.49,17.30 9.00,17.30 C6.51,17.30 4.55,14.31 4.55,10.99 C4.55,5.68 8.47,1.53 9.00,0.70 Z M9.00,4.02 C9.60,7.09 9.60,10.16 9.54,10.16 C9.54,13.05 9.18,14.98 9.00,14.98 C8.82,14.98 8.46,13.05 8.46,10.16 C8.40,10.16 8.40,7.09 9.00,4.02 Z" clip-rule="evenodd" transform="rotate(-18 9 9)"/></clipPath></defs><g clip-path="url(#markClip)"><rect width="18" height="18" fill="currentColor"/><rect class="sheen" x="6" y="-4" width="5" height="26"/></g></svg>
+        <span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      </div>
+      <div class="q" id="q" contenteditable="true" spellcheck="false"></div>
+      <div class="listen-hint" id="listenHint"></div>
+      <div class="hold-hint" id="holdHint"></div>
+      <div class="pending-line"></div>
+    </div>
+    <div class="divider" id="divider"></div>
+    <div class="body-wrap" id="bodyWrap"><div class="body" id="body"></div></div>
+  </section>
+
+  <figure class="sharecard" id="shareCard" aria-label="分享卡预览（导出图 1200×675 的一半大小）">
+    <div class="logo" id="shareLogo"></div>
+    <div class="h">我的 <b>2,708</b> 个 AI 产物，<br>动动嘴就调出来。</div>
+    <div class="g" id="shareGroups"></div>
+    <div class="f"><b>Sesame</b><span class="u">sesame.example  ·  github.com/qiwei66/sesame</span></div>
+  </figure>
+  <section class="settings" id="settings" aria-label="Sesame 设置">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="title">通用</span></div>
+    <div class="content">
+      <div class="group">
+        <div class="pref">
+          <div class="txt"><div class="t">登录时打开 Sesame</div><div class="d" id="loginHint"></div></div>
+          <span class="switch on" role="switch" aria-checked="true" id="loginSwitch"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hud" id="hud"></div>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const SEED = 'M9.00,0.70 C9.53,1.53 13.45,5.68 13.45,10.99 C13.45,14.31 11.49,17.30 9.00,17.30 C6.51,17.30 4.55,14.31 4.55,10.99 C4.55,5.68 8.47,1.53 9.00,0.70 Z M9.00,4.02 C9.60,7.09 9.60,10.16 9.54,10.16 C9.54,13.05 9.18,14.98 9.00,14.98 C8.82,14.98 8.46,13.05 8.46,10.16 C8.40,10.16 8.40,7.09 9.00,4.02 Z';
+  const ic = (n) => `<svg class="i"><use href="#i-${n}"/></svg>`;
+  const html = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  if (params.has('shot')) document.body.classList.add('shot');
+  if (params.has('promo')) document.body.classList.add('promo');
+
+  const kind = (icon, label) => `<span class="kind">${ic(icon)}${label}</span>`;
+  const intent = (verb, target, k) =>
+    `<div class="intent"><span class="verb">${verb}</span><svg class="i sep"><use href="#i-caret-right"/></svg><span class="target">${target}</span>${k}</div>`;
+  const opened = (done, name, url, src) => `
+    <div class="opened">
+      <div class="tile dash">${ic('chart-line-up')}</div>
+      <div class="txt">
+        <div class="title"><span class="done">${done}</span>${name}</div>
+        <div class="sub"><span class="url">${url}</span><span class="dot">·</span>${src}</div>
+      </div>
+    </div>`;
+
+
+  const markSvg = () => `<svg class="mark" viewBox="0 0 18 18" aria-hidden="true"><path d="${SEED}" fill="currentColor" fill-rule="evenodd" transform="rotate(-18 9 9)"/></svg>`;
+  // share card preview: icon + the non-empty groups (only counts: no titles, paths or names)
+  setTimeout(() => {
+    document.getElementById('shareLogo').innerHTML = markSvg();
+    document.getElementById('shareGroups').innerHTML = [['chart-line-up', '看板', '186'], ['file-text', '报告', '412'], ['presentation-chart', 'PPT', '37'], ['globe-simple', '网站', '64'], ['git-pull-request', 'PR', '1,293'], ['file', '文件', '716']]
+      .map(([i, k, c]) => `<span>${ic(i)}${k}<b>${c}</b></span>`).join('');
+  }, 0);
+  const liveRow = (fav, icon, title, sub, k, sel = false) =>
+    `<div class="row${sel ? ' sel' : ''}"><span class="fav ${fav}">${icon}</span><div class="txt"><div class="t">${title}</div><div class="d">${sub}</div></div>${k}<span class="ret"><kbd>${ic('arrow-elbow-down-left')}</kbd></span></div>`;
+  const ZH_Q = '打开上周让 Claude 做的那个交易大盘';
+  // The hot key named in the copy is always the key that works right now: ⌘Space once Sesame has it, the backup
+  // ⌥⇧Space while Spotlight or a launcher still holds ⌘Space (states k / k2). Never written out by hand.
+  const CMD = '⌘Space', BACKUP = '⌥⇧Space';
+  const ph = (key) => `打一句话，或按住 ${key} 说`;
+  const caps = (key, down = false) => key.replace('Space', '').split('').concat('space').map((k) => `<kbd${down ? ' class="down"' : ''}>${k}</kbd>`).join('');
+  const takeover = (note, primary) => `
+      <div class="ask">
+        <div class="top">
+          <div class="tile">${ic('command')}</div>
+          <div><h3>用 ${CMD} 打开 Sesame？</h3><p class="note">${note}</p></div>
+        </div>
+        <div class="actions">
+          <button class="btn plain">先用 ${BACKUP}</button>
+          <button class="btn default">${primary}<kbd>${ic('arrow-elbow-down-left')}</kbd></button>
+        </div>
+      </div>`;
+  const S = {
+    1: { q: `打开上周让 Claude 做的那个交易<span class="interim">大盘</span><span class="caret"></span>`, mode: 'listening', body: '' },
+    2: { q: ZH_Q, mode: 'resolving', open: false, body: `
+      ${intent('打开', '交易大盘', kind('terminal-window', '本机服务'))}
+      <div class="skel"><div class="b tileb"></div><div class="lines"><div class="b l1"></div><div class="b l2"></div></div></div>` },
+    3: { q: ZH_Q, open: true, body: `
+      ${intent('打开', '交易大盘', kind('terminal-window', '本机服务'))}
+      ${opened('已打开', '交易大盘', 'localhost:7341', '9月24日 Claude Code 会话产出')}` },
+
+    4: { q: '', ph: ph(BACKUP), key: BACKUP, intro: true, body: `
+      <div class="intro">
+        <div class="headline">动动嘴，就调出来。</div>
+        <div class="count"><span class="n" data-count="2708">2,708</span> 个 AI 产物，一句话的事。</div>
+        <div class="srcrow"><span class="src">来自你和 Claude Code、Codex 的全部对话</span><button class="share" id="shareBtn">${ic('arrow-up')}<span>分享</span></button></div>
+        <div class="cats">
+          <div class="cat">${ic('chart-line-up')}<span class="k">看板</span><span class="c" data-count="186">186</span></div>
+          <div class="cat">${ic('file-text')}<span class="k">报告</span><span class="c" data-count="412">412</span></div>
+          <div class="cat">${ic('presentation-chart')}<span class="k">PPT</span><span class="c" data-count="37">37</span></div>
+          <div class="cat">${ic('globe-simple')}<span class="k">网站</span><span class="c" data-count="64">64</span></div>
+          <div class="cat">${ic('git-pull-request')}<span class="k">PR</span><span class="c" data-count="1293">1,293</span></div>
+          <div class="cat">${ic('file')}<span class="k">文件</span><span class="c" data-count="716">716</span></div>
+        </div>
+        <div class="try"><span class="lbl">试试</span><span class="t">打开上周那个交易大盘</span><kbd>${ic('arrow-elbow-down-left')}</kbd></div>
+      </div>` },
+    '4s': { q: '', ph: ph(BACKUP), key: BACKUP, intro: true, shared: true, body: '' },
+    c: { q: '', card: true, body: '' },
+    h: { q: '', ph: ph(BACKUP), key: BACKUP, intro: true, taken: true, body: '' },
+    t0: { q: '', ph: ph(BACKUP), key: BACKUP, body: '' },
+    t1: { q: '大', live: true, body: `<div class="live list" id="list">
+        ${liveRow('dash', ic('chart-line-up'), '交易大盘', 'localhost:7341', kind('terminal-window', '本机服务'), true)}
+        ${liveRow('claude', ic('sparkle'), '年度大事记', 'claude.ai/artifact/2b91…c04', kind('sparkle', 'Claude 页面'))}
+        ${liveRow('local', ic('file-text'), '大客户名单.md', '~/Documents/销售/', kind('file', '文件'))}
+        ${liveRow('local', ic('globe-simple'), '大促活动页', 'shop.example.com/sale', kind('globe-simple', '网页'))}
+      </div>` },
+    t2: { q: '交易大', live: true, body: `<div class="live list" id="list">
+        ${liveRow('dash', ic('chart-line-up'), '交易大盘', 'localhost:7341', kind('terminal-window', '本机服务'), true)}
+      </div>` },
+    t3: { q: '交易大盘 v2', live: true, body: `<div class="live list" id="list">
+        ${liveRow('seek', markSvg(), '让 Sesame 去找「交易大盘 v2」', '在全部记录里找，按回车开始', '', true)}
+      </div>` },
+    v: { q: `打开上周那个交易<span class="interim">大盘</span><span class="caret"></span>`, mode: 'listening', hold: true, key: BACKUP, body: '' },
+    m: { q: '', ph: ph(BACKUP), key: BACKUP, body: `
+      <div class="ask">
+        <div class="top">
+          <div class="tile">${ic('microphone')}</div>
+          <div><h3>按住 ${BACKUP}，直接说</h3><p>Sesame 要用麦克风听你说的这一句。只在你按住时收音，松开就停。</p></div>
+        </div>
+        <div class="actions">
+          <button class="btn plain">先不用</button>
+          <button class="btn default">允许麦克风<kbd>${ic('arrow-elbow-down-left')}</kbd></button>
+        </div>
+      </div>` },
+    s: { settings: true },
+    k: { q: '', ph: ph(BACKUP), key: BACKUP, body: takeover('在打开的设置里取消勾选「<b>显示“聚焦”搜索</b>」，Sesame 会自动接上。', '去设置') },
+    k2: { q: '', ph: ph(BACKUP), key: BACKUP, body: takeover(`${CMD} 正由 Alfred 使用。<br>在它的设置里「<b>General › Alfred Hotkey</b>」换个键，Sesame 会自动接上。`, '打开 Alfred 设置') },
+    k3: { q: '', ph: ph(CMD), body: `
+      <div class="ask done">
+        <div class="top">
+          <div class="tile">${ic('check')}</div>
+          <div><h3>好了，以后按 ${CMD}</h3><p class="note">轻按打开，按住直接说。</p></div>
+        </div>
+      </div>` },
+    5: { q: '查一下磁盘空间', open: true, body: `
+      ${intent('查询', '磁盘空间', kind('hard-drives', '系统信息'))}
+      <div class="info">
+        <div class="head"><span class="ic">${ic('hard-drives')}</span><span class="name">Macintosh HD</span><span class="meta">内置磁盘</span></div>
+        <div class="big"><span class="n">150</span><span class="u">GB</span><span class="of">可用</span></div>
+        <div class="bar" role="meter" aria-valuemin="0" aria-valuemax="926" aria-valuenow="150"><i class="w-disk"></i></div>
+        <div class="foot"><span>已用 <b>776 GB</b>，共 <b>926 GB</b></span><span class="r">${ic('clock')}2 分钟前更新</span></div>
+      </div>` },
+    6: { q: '打开交易大盘', open: true, body: `
+      ${intent('打开', '交易大盘', kind('magnifying-glass', '3 个候选'))}
+      <div class="list" id="list">
+        <div class="row sel"><span class="fav dash">${ic('chart-line-up')}</span><div class="txt"><div class="t">交易大盘</div><div class="d"><span class="hl">localhost:7341</span></div></div>${kind('terminal-window', '本机服务')}<span class="ret"><kbd>${ic('arrow-elbow-down-left')}</kbd></span></div>
+        <div class="row"><span class="fav claude">${ic('sparkle')}</span><div class="txt"><div class="t">交易大盘改版预览</div><div class="d"><span class="hl">claude.ai</span>/artifact/7f3c…e21</div></div>${kind('sparkle', 'Claude 页面')}<span class="ret"><kbd>${ic('arrow-elbow-down-left')}</kbd></span></div>
+        <div class="row"><span class="fav local">${ic('terminal-window')}</span><div class="txt"><div class="t">交易大盘（旧版）</div><div class="d"><span class="hl">localhost:5173</span></div></div>${kind('terminal-window', '本机服务')}<span class="ret"><kbd>${ic('arrow-elbow-down-left')}</kbd></span></div>
+      </div>` },
+    7: { q: '把下载里的 dmg 都扔掉', open: true, body: `
+      ${intent('移到废纸篓', '下载 / *.dmg', kind('file', '60 个文件'))}
+      <div class="confirm">
+        <div class="top">
+          <div class="tile">${ic('trash')}</div>
+          <div><h3>把 60 个 .dmg 移到废纸篓？</h3><p>“下载”文件夹里的全部安装包，共 <b>9.2 GB</b>。</p></div>
+        </div>
+        <div class="files">
+          <span class="file">Docker.dmg<span class="sz">612 MB</span></span>
+          <span class="file">Figma.dmg<span class="sz">418 MB</span></span>
+          <span class="file">OrbStack.dmg<span class="sz">142 MB</span></span>
+          <span class="file more">另外 57 个</span>
+        </div>
+        <div class="actions">
+          <button class="btn ghost">移到废纸篓</button>
+          <button class="btn default" autofocus>取消<kbd>${ic('arrow-elbow-down-left')}</kbd></button>
+        </div>
+      </div>` },
+    8: { q: 'open the trading dashboard', open: true, lang: 'en', body: `
+      ${intent('Open', 'Trading Dashboard', kind('terminal-window', 'Local service'))}
+      ${opened('Opened', 'Trading Dashboard', 'localhost:7341', 'from a Claude Code session, Sep 24')}` },
+    9: { menu: true },
+    0: { q: '打开昨天那个汇率换算表', open: false, body: `
+      ${intent('打开', '汇率换算表', kind('magnifying-glass', '0 个结果'))}
+      <div class="miss">
+        <div class="msg">没找到“汇率换算表”</div>
+        <dl class="steps">
+          <dt>已经做了</dt><dd>搜过 <b>2,708 条</b>记录、Chrome 最近 7 天历史和桌面文件，没有标题或内容对得上的。</dd>
+          <dt>需要你</dt><dd class="ask">说一个页面里出现过的词，比如币种或金额；或者告诉我是在哪个项目里做的。</dd>
+        </dl>
+      </div>` },
+  };
+
+  const MENUBAR = {
+    zh: { apps: ['Finder', '文件', '编辑', '显示', '前往', '窗口', '帮助'], clock: '10月1日 周四  21:14', hint: '正在听' },
+    en: { apps: ['Finder', 'File', 'Edit', 'View', 'Go', 'Window', 'Help'], clock: 'Thu Oct 1  9:14 PM', hint: 'Listening' },
+  };
+
+  let cur = null;
+  const panel = $('panel'), body = $('body'), wrap = $('bodyWrap');
+
+  function setLang(lang) {
+    const m = MENUBAR[lang];
+    html.lang = lang === 'en' ? 'en' : 'zh-CN';
+    $('apps').innerHTML = m.apps.map((a, i) => `<span class="${i === 0 ? 'app-name' : ''}">${a}</span>`).join('');
+    $('clock').textContent = m.clock;
+    $('listenHint').innerHTML = `${m.hint}<kbd>esc</kbd>`;
+  }
+
+  function go(id, { instant = false } = {}) {
+    id = String(id);
+    let s = S[id]; if (!s) return;
+    if (s.taken || s.shared) s = { ...S['4'], ...s, body: S['4'].body };
+    const prev = cur; cur = id;
+    setLang(s.lang || 'zh');
+    $('menu').classList.toggle('show', !!s.menu);
+    $('settings').classList.toggle('show', !!s.settings);
+    $('mbSesame').classList.toggle('on', !!s.menu);
+    document.querySelectorAll('.hud [data-k]').forEach((b) => b.classList.toggle('on', b.dataset.k === String(id)));
+    history.replaceState(null, '', `${location.search}#${id}${html.dataset.theme === 'dark' ? 'd' : ''}`);
+    $('shareCard').classList.toggle('show', !!s.card);
+    if (s.settings || s.card) { panel.classList.add('hidden'); return; }
+
+    if (s.menu) {
+      const r = $('mbSesame').getBoundingClientRect();
+      $('menu').style.left = `${Math.min(r.left - 4, innerWidth - 306)}px`;
+      panel.classList.add('hidden'); return;
+    }
+    const wasHidden = panel.classList.contains('hidden') || prev === null;
+    panel.classList.remove('hidden');
+    if (wasHidden && !document.body.classList.contains('shot')) {
+      panel.classList.remove('summon'); $('mark').classList.remove('shine'); void panel.offsetWidth;
+      panel.classList.add('summon'); $('mark').classList.add('shine');
+    }
+
+    panel.classList.toggle('listening', s.mode === 'listening');
+    panel.classList.toggle('resolving', s.mode === 'resolving');
+    panel.classList.toggle('holding', !!s.hold);
+    $('q').dataset.ph = s.ph || '';
+    $('holdHint').innerHTML = `松开就发送${caps(s.key || BACKUP, true)}`;
+    $('loginHint').textContent = `开机后在菜单栏待命，按 ${s.key || BACKUP} 就能用。`;
+    $('q').innerHTML = s.q;
+    $('divider').style.opacity = s.body ? 1 : 0;
+
+    const from = wrap.getBoundingClientRect().height;
+    const wasLive = S[prev] && S[prev].live && body.querySelector('.row');
+    body.innerHTML = s.body ? (s.live ? s.body : `<div class="stage">${s.body}</div>`) : '';
+    if (s.live && !wasLive) body.querySelector('.live')?.classList.add('grow');
+    if (s.taken) body.querySelector('.intro')?.insertAdjacentHTML('beforeend', `<div class="taken">${ic('keyboard')}<span>${s.key || BACKUP} 已被别的应用占用</span><button class="link">换一个</button></div>`);
+    if (s.shared) { const b = body.querySelector('#shareBtn'); if (b) b.innerHTML = `${ic('check')}<span>已存到下载并复制</span>`; }
+    $('shareCard').classList.toggle('show', !!s.card);
+    if (s.intro) countUp();
+    const to = body.getBoundingClientRect().height;
+    if (instant || document.body.classList.contains('shot')) { wrap.style.height = `${to}px`; return; }
+    wrap.style.height = `${from}px`;
+    requestAnimationFrame(() => { wrap.style.height = `${to}px`; });
+  }
+
+  // first run: numbers roll up once, then the example row appears
+  function countUp() {
+    if (document.body.classList.contains('shot')) return;
+    const els = [...body.querySelectorAll('[data-count]')]; const t0 = performance.now(); const D = 1200;
+    const tick = (t) => {
+      const k = Math.min(1, (t - t0) / D), e = 1 - Math.pow(1 - k, 3);
+      els.forEach((el) => { el.textContent = Math.round(+el.dataset.count * e).toLocaleString('en-US'); });
+      if (k < 1 && (cur === '4' || cur === '4s')) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // typing demo: replays the query growing one step at a time
+  let typingTimer = null;
+  function playTyping() {
+    clearTimeout(typingTimer);
+    const frames = ['t0', 't1', 't2', 't3']; let i = 0;
+    const step = () => { go(frames[i]); i += 1; if (i < frames.length) typingTimer = setTimeout(step, 1100); };
+    step();
+  }
+
+  function setTheme(t) {
+    html.dataset.theme = t;
+    history.replaceState(null, '', `${location.search}#${cur}${t === 'dark' ? 'd' : ''}`);
+  }
+
+  // hud
+  const order = ['1', '2', '3', '5', '6', '7', '8', '9', '0', '4', '4s', 'c', 'h', 'k', 'k2', 'k3', 't', 'v', 'm', 's'];
+  const labels = { 1: '聆听', 2: '意图', 3: '成功', 5: '信息', 6: '候选', 7: '确认', 8: 'EN', 9: '菜单', 0: '未找到', 4: '开场', '4s': '分享', c: '分享卡', h: '热键冲突', k: '接管', k2: '接管·Alfred', k3: '接管好了', t: '打字', v: '按住说', m: '麦克风', s: '设置' };
+  $('hud').innerHTML = order.map((k) => `<button data-k="${k}" title="${labels[k]}">${k} ${labels[k]}</button>`).join('') +
+    `<span class="gap"></span><button data-theme-toggle>D 深色</button>`;
+  $('hud').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.hasAttribute('data-theme-toggle')) setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+    else if (b.dataset.k === 't') playTyping(); else go(b.dataset.k);
+  });
+
+  // keyboard: 1-9, 0, D; arrows move the candidate selection in state 6
+  const onKey = (e) => {
+    // while editing the query, keys type text; Esc leaves the field so 0-9 / D work again
+    if (e.target === $('q')) { if (e.key === 'Escape') $('q').blur(); return; }
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); clearTimeout(typingTimer); go(e.key); return; }
+    if (/^[vmsh]$/i.test(e.key)) { clearTimeout(typingTimer); go(e.key.toLowerCase()); return; }
+    if (e.key.toLowerCase() === 'k') { clearTimeout(typingTimer); go(cur === 'k' ? 'k2' : cur === 'k2' ? 'k3' : 'k'); return; }
+    if (e.key.toLowerCase() === 't') { playTyping(); return; }
+    if (e.key.toLowerCase() === 'd') { setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark'); return; }
+    if ((cur === '6' || (S[cur] && S[cur].live)) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      e.preventDefault();
+      const rows = [...document.querySelectorAll('#list .row')];
+      const i = rows.findIndex((r) => r.classList.contains('sel'));
+      const n = (i + (e.key === 'ArrowDown' ? 1 : -1) + rows.length) % rows.length;
+      rows.forEach((r, j) => r.classList.toggle('sel', j === n));
+    }
+    if (e.key === 'Escape') $('q').blur();
+  };
+  window.addEventListener('keydown', onKey);
+  window.addEventListener('pagehide', () => window.removeEventListener('keydown', onKey), { once: true });
+  $('q').addEventListener('blur', () => window.getSelection().removeAllRanges());
+
+  // initial state from hash, e.g. #4 or #4d
+  const m = /^#(4s|[0-9]|t[0-3]|k[23]?|[vmshc])(d?)$/.exec(location.hash);
+  if (m && m[2]) html.dataset.theme = 'dark';
+  go(m ? m[1] : '1');
+})();
+</script>
+</body>
+</html>

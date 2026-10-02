@@ -1,0 +1,3 @@
+/* Permission prompt text (microphone / speech recognition); the same sentence as the panel notice. */
+"NSMicrophoneUsageDescription" = "Sesame uses the microphone to hear this one sentence. It listens only while you hold the keys and stops when you let go.";
+"NSSpeechRecognitionUsageDescription" = "Sesame uses the microphone to hear this one sentence. It listens only while you hold the keys and stops when you let go.";

@@ -1,0 +1,3 @@
+/* 系统权限弹窗里的说明（麦克风 / 语音识别），与面板上的说明是同一句。 */
+"NSMicrophoneUsageDescription" = "Sesame 要用麦克风听你说的这一句。只在你按住时收音，松开就停。";
+"NSSpeechRecognitionUsageDescription" = "Sesame 要用麦克风听你说的这一句。只在你按住时收音，松开就停。";

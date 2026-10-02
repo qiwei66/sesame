@@ -1,0 +1,22 @@
+{
+  "name": "voice-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "语音指令助手 v1：缓存层 + DeepSeek 工具调用层",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build:alfred": "node scripts/build-alfred.ts",
+    "test:autoenter": "bash scripts/build-autoenter.sh --no-install && \"autoenter/build/VA AutoEnter.app/Contents/MacOS/va-autoenter\" --selftest",
+    "build:autoenter": "bash scripts/build-autoenter.sh",
+    "eval:real": "node --no-warnings scripts/eval-real.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,20 @@
+#!/bin/bash
+# 一步授权：打开「辅助功能」设置页 + 在访达里选中 VA AutoEnter.app，把它拖进列表并打开开关；脚本等授权生效后自动重启助手。
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+# shellcheck source=bin/va-env
+. "$ROOT/bin/va-env"
+BIN="$ROOT/bin/VA AutoEnter.app"
+LOG="$ROOT/logs/va-autoenter.log"
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+open -R "$BIN"
+echo "请把访达里选中的「VA AutoEnter」拖进「辅助功能」列表，并打开它的开关。等待授权生效（最多 3 分钟）…"
+for i in $(seq 1 90); do
+  if tail -5 "$LOG" 2>/dev/null | grep -q "accessibility_trusted=true"; then
+    launchctl kickstart -k "gui/$(id -u)/$VA_BUNDLE_PREFIX.va-autoenter"
+    echo "已授权并重启助手。现在 ⌘Space → 按住 Fn 说话 → 松开，即可自动执行。"
+    exit 0
+  fi
+  sleep 2
+done
+echo "3 分钟内没检测到授权。确认列表里「VA AutoEnter」的开关已打开后，再运行一次本命令。"
+exit 1

@@ -1,0 +1,50 @@
+{
+  "a-gate": {
+    "name": "朱门",
+    "en": "Gate ajar",
+    "meaning": "推开一条缝的朱红大门：要找的产物就在门后。",
+    "word": {
+      "family": "sfd",
+      "weight": 600,
+      "tracking": "-0.012em",
+      "case": "Sesame",
+      "label": "SF Pro Display Semibold"
+    }
+  },
+  "b-keyhole": {
+    "name": "钥匙孔",
+    "en": "Keyhole light",
+    "meaning": "门后亮着灯：说出口的那句话就是钥匙。",
+    "word": {
+      "family": "sft",
+      "weight": 500,
+      "tracking": "0.02em",
+      "case": "Sesame",
+      "label": "SF Pro Text Medium，略放宽字距"
+    }
+  },
+  "c-seed": {
+    "name": "芝麻",
+    "en": "One seed",
+    "meaning": "一粒芝麻很小，却能开门：小工具，一句话的事。",
+    "word": {
+      "family": "sfr",
+      "weight": 600,
+      "tracking": "-0.008em",
+      "case": "sesame",
+      "label": "SF Pro Rounded Semibold，全小写"
+    }
+  },
+  "d-voice-arch": {
+    "name": "说话的门",
+    "en": "Speaking arch",
+    "meaning": "门的轮廓就是一个对话气泡：说出来，门就开了。",
+    "word": {
+      "family": "sfd",
+      "weight": 700,
+      "tracking": "-0.022em",
+      "case": "Sesame",
+      "label": "SF Pro Display Bold，收紧字距"
+    }
+  }
+}
