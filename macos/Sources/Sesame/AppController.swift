@@ -30,6 +30,8 @@ final class AppController: NSObject, NSMenuDelegate {
     private var liveSeq = 0
     /// id of the row the user moved to with ↑↓ (nil = selection stays on the first row)
     private var liveChosenId: String?
+    /// installed apps for the live list (scanned once, rescanned when an app folder changes)
+    let apps = AppCatalog()
     // first run
     private var introVisible = false
     private var introTarget = IntroCard()
@@ -58,6 +60,8 @@ final class AppController: NSObject, NSMenuDelegate {
     // MARK: launch
 
     func start(demo: DemoOptions?) {
+        apps.onScan = { n, ms in Task { @MainActor in Log.write("[apps] scanned \(n) apps in \(ms)ms") } }
+        if demo == nil { apps.start() }
         setupStatusItem()
         wirePanel()
         setupPushToTalk()
@@ -563,14 +567,17 @@ final class AppController: NSObject, NSMenuDelegate {
     }
 
     private func runLive(_ q: String, seq: Int, typedAt: Date) {
-        guard let rpc, seq == liveSeq else { return }
+        guard seq == liveSeq else { return }
+        let rpc = rpc
+        // apps are matched in-process (no disk access while typing); the core returns what the AI made
+        let installed = apps.records
         Task {
-            let hits = (try? await rpc.search(query: q, limit: LiveList.maxRows, live: true).results) ?? []
+            let hits = (try? await rpc?.search(query: q, limit: LiveList.maxRows, live: true).results) ?? []
             guard seq == self.liveSeq, self.panel.isVisible else { return }
             let m = self.panel.model
             // a request already running (↩ pressed) owns the panel
             if case .resolving = m.phase { return }
-            let items = hits.map(Candidate.init(hit:))
+            let items = AppSearch.merge(query: q, apps: installed, hits: hits)
             let sel = LiveSearch.selection(in: items, chosenId: self.liveChosenId)
             if sel == 0, let id = self.liveChosenId, !items.contains(where: { $0.id == id }) { self.liveChosenId = nil }
             let before: Int = { if case .live(let l) = m.phase { return l.isFallback ? 0 : l.items.count }; return 0 }()
@@ -855,7 +862,7 @@ final class AppController: NSObject, NSMenuDelegate {
     }
 
     private func kindString(_ k: ChipKind) -> String {
-        switch k { case .artifact: return "artifact"; case .local: return "local"; case .file, .files: return "file"; default: return "web" }
+        switch k { case .artifact: return "artifact"; case .local: return "local"; case .file, .files: return "file"; case .app: return "app"; default: return "web" }
     }
 
     func open(_ c: Candidate) {

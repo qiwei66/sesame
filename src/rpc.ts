@@ -10,7 +10,7 @@ import { openedInfo, searchLive, searchSaved } from './saved.ts';
 import type { IndexService } from './index-service.ts';
 import { TOOL_MAP, needsConfirm } from './tools.ts';
 import { collectChecks } from './doctor.ts';
-import { pickSample } from './title-quality.ts';
+import { isProduct, pickSample } from './title-quality.ts';
 import type { RunReport, Runner } from './types.ts';
 
 export const RPC_VERSION = 1;
@@ -127,6 +127,7 @@ export async function dispatch(req: RpcRequest, d: ServeDeps): Promise<RpcRespon
         const results = found.slice(0, limit).map((c) => ({
           key: c.item.key, kind: c.item.kind, title: openedInfo(c.item).title, url: c.item.url, score: Math.round(c.score * 1000) / 1000,
           aliasHit: c.aliasHit, needsAuth: Boolean(c.item.needsAuth), lastSeen: c.item.lastSeen, count: c.item.count,
+          made: isProduct(c.item),
         }));
         return { jsonrpc: '2.0', id, result: { query, results, cost: { cacheHit: true, tokens: 0, ms: Date.now() - t0, estimate: { amount: 0, currency: '¥' } } } };
       }

@@ -123,14 +123,17 @@ that looks like a dashboard / report / page (Claude pages and local services fir
 Local index search only (no model, no network). `limit` 1–20, default 5. `mode: "live"` = results while typing:
 only items whose name (title, its uncut original, alias, PR/issue tag) carries at least half of the typed text; one or two
 characters also match inside a title; one row per name; only what the AI made, unless the text asks for web pages /
-links / articles or nothing the AI made matches (then mentioned links come after). An empty result means the UI shows
-"let Sesame look for …". Ranking in both modes prefers what the AI made and lowers links that were only mentioned.
+links / articles (then mentioned links come after). When nothing the AI made for the user matches, the agent's own work
+files may fill in, but links that were only mentioned never do. An empty result means the UI shows "let Sesame look
+for …". Ranking in both modes prefers what the AI made and lowers links that were only mentioned. Each result carries
+`made` (true = the AI made it, false = a link that was only mentioned or read); the app ranks installed apps around it
+([live-ranking.md](live-ranking.md)). Installed apps are not in this result: the app matches them itself.
 
 ```jsonc
 { "query": "trading dashboard",
   "results": [ { "key": "local:host:8787", "kind": "local", "title": "Trading Dashboard",
                  "url": "http://127.0.0.1:8787", "score": 7.12, "aliasHit": false,
-                 "needsAuth": false, "lastSeen": "2026-10-01T10:00:00Z", "count": 3 } ],
+                 "needsAuth": false, "lastSeen": "2026-10-01T10:00:00Z", "count": 3, "made": true } ],
   "cost": { "cacheHit": true, "tokens": 0, "ms": 4, "estimate": { "amount": 0, "currency": "¥" } } }
 ```
 
