@@ -390,7 +390,7 @@ final class AppController: NSObject, NSMenuDelegate {
     /// Same wording and spacing as the index row ("2 分钟前" / "2 min ago")
     static func relative(_ d: Date) -> String { IndexLine.ago(d, now: Date(), zh: L10n.language.hasPrefix("zh")) }
 
-    /// "正在整理… 1,204 条" / "2,708 条 · 2 分钟前" from structured fields (never a path)
+    /// "正在整理… 1,204 条" / "313 条 · 2 分钟前" from structured fields (never a path)
     func indexStatusText() -> String {
         if case .failed = coreState { return L10n.t("menu.indexUnavailable") }
         return IndexLine.text(indexStatus, zh: zh)

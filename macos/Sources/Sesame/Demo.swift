@@ -46,7 +46,7 @@ enum Demo {
         case "8": return ("open the trading dashboard", .success(IntentLine(verb: .open, target: "Trading Dashboard", chip: .local),
                                                              OpenedCard(name: "Trading Dashboard", address: "localhost:7341", source: "from a Claude Code session, Sep 24", kind: .local)))
         case "0": return ("打开昨天那个汇率换算表", .notFound(IntentLine(verb: .open, target: "汇率换算表", chip: .results(0)),
-                                                 MissCard(message: "没找到“汇率换算表”", done: "搜过 **2533 条**索引、Chrome 最近 7 天历史和桌面文件，没有标题或内容对得上的。",
+                                                 MissCard(message: "没找到“汇率换算表”", done: "搜过 **313 条**产物的标题和所在对话，没有对得上的。",
                                                           need: "说一个页面里出现过的词，比如币种或金额；或者告诉我是在哪个项目里做的。")))
         case "4", "4s", "h":
             let sample = Candidate(id: "demo", title: "上周那个交易大盘", address: "localhost:7341", url: nil, kind: .local)
@@ -101,7 +101,7 @@ enum Demo {
                 RecentItem(title: "Q3 复盘图表", url: nil, query: "", kind: "artifact", date: now.addingTimeInterval(-26 * 3600)),
                 RecentItem(title: "供应商比价表.md", url: nil, query: "", kind: "file", date: now.addingTimeInterval(-4 * 86400)),
             ]
-            app.demoIndexLine = L10n.language == "en" ? "2533 items · 2 min ago" : "2533 条 · 2 分钟前更新"
+            app.demoIndexLine = L10n.language == "en" ? "313 items · 2 min ago" : "313 条 · 2 分钟前更新"
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { app.popMenuForDemo() }
         } else if o.state == "s" {
             app.openSettings()
