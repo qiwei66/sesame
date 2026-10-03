@@ -46,7 +46,7 @@ public struct RestartPolicy: Equatable, Sendable {
     public mutating func reset() { failuresInARow = 0 }
 }
 
-/// Text for the menu's index row: "正在整理… 1,204 条" / "2,708 条 · 2 分钟前". Never a path.
+/// Text for the menu's index row: "正在整理… 1,204 条" / "313 条 · 2 分钟前". Never a path.
 public enum IndexLine {
     public static func text(_ s: IndexStatus?, now: Date = Date(), zh: Bool) -> String {
         guard let s else { return zh ? "正在连接…" : "Connecting…" }
