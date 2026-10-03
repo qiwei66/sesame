@@ -23,12 +23,13 @@
   }
 
   /* ---------- the film ---------- */
+  var FILM_V = '20261003';   // bump when site/media/promo-*.mp4 changes, so browsers and the Pages CDN fetch the new film
   var video = document.getElementById('promo');
   var player = document.getElementById('player');
   var playBtn = document.getElementById('playBtn');
   function paintFilm() {
     var l = lang();
-    var src = 'media/promo-' + l + '.mp4';
+    var src = 'media/promo-' + l + '.mp4?v=' + FILM_V;
     if (video.getAttribute('data-src') === src) return;
     var wasPlaying = !video.paused;
     video.pause();
