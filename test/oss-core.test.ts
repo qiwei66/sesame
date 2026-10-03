@@ -415,7 +415,7 @@ test('doctor：索引新鲜度读 indexDir、错误统计读 logDir（不再写�
   writeFileSync(join(idx, 'items.json'), JSON.stringify([{}, {}, {}]));
   writeFileSync(join(logs, '2026-10-01.jsonl'), `${JSON.stringify({ ts: '2026-10-01T11:00:00Z', layer: 'error', error: 'boom' })}\n${JSON.stringify({ ts: '2026-10-01T11:01:00Z', layer: 'llm' })}\n`);
   const run = async (): Promise<RunOutput> => ({ code: 1, stdout: '', stderr: '' });
-  const env = { root, indexDir: idx, logDir: logs, home: root, run, now: () => now, skipAlfredTrigger: true };
+  const env = { root, indexDir: idx, logDir: logs, home: root, run, now: () => now };
   const zh = await withLocale('zh', () => collectChecks(env));
   const fresh = zh.find((c) => c.name === '索引新鲜度');
   assert.equal(fresh?.level, 'ok');

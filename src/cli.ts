@@ -3,7 +3,7 @@ import { homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writeLog } from './log.ts';
-import { runDoctor, SELFTEST_PREFIX, writeSelftestMarker } from './doctor.ts';
+import { runDoctor } from './doctor.ts';
 import { createRuntime, runner } from './runtime.ts';
 import { serveStdio } from './rpc.ts';
 import { IndexService } from './index-service.ts';
@@ -25,7 +25,6 @@ const USAGE = `usage:
 const CFG = loadConfig();
 const PATHS = resolvePaths(CFG, ROOT, process.env, HOME);
 setDefaultOutputLocale(uiLocale(CFG));
-const dataDir = (): string => PATHS.dataDir;
 const doctorEnv = () => ({ root: PATHS.dataDir, appRoot: ROOT, indexDir: PATHS.indexDir, logDir: PATHS.logDir, home: HOME, run: runner });
 
 async function main(): Promise<number> {
@@ -46,11 +45,6 @@ async function main(): Promise<number> {
   if (!input) {
     process.stderr.write(USAGE);
     return 2;
-  }
-  // 自检入口（Alfred 外部触发 / va doctor 用）：只写一个标记文件，不调模型、不碰缓存、不执行任何动作
-  if (input.startsWith(SELFTEST_PREFIX)) {
-    writeSelftestMarker(join(dataDir(), 'logs'), input.slice(SELFTEST_PREFIX.length).trim());
-    return 0;
   }
   if (input === 'doctor' || input === '--doctor') return runDoctor(doctorEnv());
 
@@ -96,7 +90,7 @@ function printReport(_input: string, logDir: string, report: RunReport, print: (
 }
 
 main().then((code) => process.exit(code), (e: unknown) => {
-  // 退出码 3 = 未捕获错误（用户没看到任何反馈）；Alfred 脚本据此写日志 + 弹通知
+  // 退出码 3 = 未捕获错误（用户没看到任何反馈）
   process.stderr.write(`[va] 未捕获错误：${(e as Error).message}\n`);
   process.exit(3);
 });

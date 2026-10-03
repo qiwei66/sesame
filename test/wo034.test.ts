@@ -10,7 +10,7 @@ import { handle, openQuery } from '../src/router.ts';
 import { memoryStore, searchSaved, displayTitle } from '../src/saved.ts';
 import { extractTimeHint } from '../src/timewords.ts';
 import { defaultConfig, resolvePaths, setConfig, INSTALL_MARKER } from '../src/config.ts';
-import { collectChecks, detectProfile } from '../src/doctor.ts';
+import { collectChecks } from '../src/doctor.ts';
 import { dispatch } from '../src/rpc.ts';
 import { IndexService } from '../src/index-service.ts';
 import { installUserTools, resetTools } from '../src/tools.ts';
@@ -292,16 +292,15 @@ test('resolvePaths：make install 装的核心（有安装标记）默认把数�
   assert.equal(resolvePaths(c, tmp(), {}, '/home/tester').dataDir.startsWith(tmpdir()), true);
 });
 
-test('doctor：Sesame 形态不报 Alfred / AutoEnter / launchd / 签名 / Spotlight', async () => {
+test('doctor：只报 Node / 模型 / 索引 / 错误，不报 Alfred / launchd / 签名 / Spotlight', async () => {
   const root = tmp();
   writeFileSync(join(root, INSTALL_MARKER), '');
-  assert.equal(detectProfile(root), 'sesame');
   const checks = await collectChecks({ root, appRoot: root, indexDir: join(root, 'index'), logDir: join(root, 'logs'), home: root, run: async () => ({ code: 1, stdout: '', stderr: '' }) });
   const names = checks.map((c) => c.name).join(' | ');
   assert.doesNotMatch(names, /Alfred|launchd|辅助功能|Accessibility|签名|signature|certificate|Spotlight/i);
   assert.ok(checks.some((c) => /索引|Index/.test(c.name)));
   const idx = checks.find((c) => /索引|Index/.test(c.name));
-  assert.doesNotMatch(idx?.fix ?? '', /launchd|bin\/va-setup/);
+  assert.doesNotMatch(idx?.fix ?? '', /launchd/);
 });
 
 test('IndexService：后台子进程建索引，带进度；结束后 indexStatus 给条数和更新时间（模拟新用户 HOME + fixture 对话）', async () => {

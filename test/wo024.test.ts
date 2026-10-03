@@ -11,7 +11,7 @@ import { TOOL_MAP, TOOLS_VERSION, toolsVersionOf, toolDefinitions, isNoCache, op
 import { memoryStore, searchSaved, isWeakWeb } from '../src/saved.ts';
 import { classify, extractUrlsFromText, isTruncatedUrl } from '../src/indexer.ts';
 import { runIndex, IndexAborted } from '../src/index-run.ts';
-import { certLevel, countRecentErrors, spotlightHotkeyEnabled, formatCheck } from '../src/doctor.ts';
+import { countRecentErrors, formatCheck } from '../src/doctor.ts';
 import type { ChatFn, ChatMessage, ChatResponse } from '../src/llm.ts';
 import type { ExecContext, RunOutput } from '../src/types.ts';
 import type { SavedItem } from '../src/indexer.ts';
@@ -236,15 +236,8 @@ test('runIndex：signal 已 abort → 抛 IndexAborted，正式索引文件一�
 
 // ── 3. doctor 纯函数 ──
 
-test('doctor：证书少于 60 天标红；Spotlight 64 号快捷键解析；24 小时错误计数', () => {
-  assert.equal(certLevel(59), 'fail');
-  assert.equal(certLevel(-3), 'fail');
-  assert.equal(certLevel(281), 'ok');
+test('doctor：失败项标红并带修法；24 小时错误计数', () => {
   assert.match(formatCheck({ name: '签名证书', level: 'fail', detail: '剩 30 天', fix: '续期' }, true), /\x1b\[31m❌ 签名证书：剩 30 天\x1b\[0m\n {5}修法：续期/);
-  const txt = '{\n    32 =     {\n        enabled = 1;\n    };\n    64 =     {\n        enabled = 0;\n        value = {};\n    };\n}';
-  assert.equal(spotlightHotkeyEnabled(txt), false);
-  assert.equal(spotlightHotkeyEnabled(txt.replace('enabled = 0', 'enabled = 1')), true);
-  assert.equal(spotlightHotkeyEnabled('{ 32 = { enabled = 1; }; }'), null);
   const logDir = mkdtempSync(join(tmpdir(), 'va-lg-'));
   const now = new Date('2026-10-01T12:00:00Z');
   writeFileSync(join(logDir, '2026-10-01.jsonl'), [

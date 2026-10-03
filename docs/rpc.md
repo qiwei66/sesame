@@ -137,12 +137,10 @@ links / articles or nothing the AI made matches (then mentioned links come after
 `kind`: `artifact` (claude.ai artifact) · `local` (127.0.0.1 / LAN / tailnet service) · `web` · `file`.
 `url` is returned to the local UI only; it is never sent to the model.
 
-### `doctor({ alfredTrigger?, profile? })`
+### `doctor()`
 
-`profile: "sesame"` (the app sends it) checks only node, model and index; `"alfred"` adds the Alfred workflow,
-AutoEnter helper, launchd, signing and Spotlight checks. Default: detected from the install.
-
-Read-only health checks (same as `va doctor`). `alfredTrigger: true` also runs the Alfred round-trip self-test.
+Read-only health checks (same as `va doctor`): node, model and key, index freshness, errors in the last 24 hours.
+Params are ignored (older clients may still send `profile`).
 
 ```jsonc
 { "checks": [ { "name": "模型", "level": "ok", "detail": "deepseek · deepseek-flash · …; key 来自 env DEEPSEEK_API_KEY（内容不显示）" },

@@ -59,6 +59,11 @@ install-core:
 	elif [ -e "$(BIN_DIR)/va" ] && [ "$$(readlink "$(BIN_DIR)/va")" != "$(CORE_DIR)/bin/va" ]; then \
 	  echo "[sesame] $(BIN_DIR)/va already points elsewhere ($$(readlink "$(BIN_DIR)/va" || echo file)); left as is"; \
 	else ln -sf "$(CORE_DIR)/bin/va" "$(BIN_DIR)/va"; fi
+	@# va-index: the manual re-index command that `va doctor` and the "run va-index" hints point at (same ownership rule as va)
+	@if [ "$(LINK_VA)" != 1 ]; then :; \
+	elif [ -e "$(BIN_DIR)/va-index" ] && [ "$$(readlink "$(BIN_DIR)/va-index")" != "$(CORE_DIR)/bin/va-index" ]; then \
+	  echo "[sesame] $(BIN_DIR)/va-index already points elsewhere; left as is"; \
+	else ln -sf "$(CORE_DIR)/bin/va-index" "$(BIN_DIR)/va-index"; fi
 	@printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"ping"}' | "$(CORE_DIR)/bin/va" serve --stdio | grep -q '"rpcVersion"' \
 	  && echo "[sesame] core ping ok" || { echo "[sesame] core did not answer ping"; exit 1; }
 	@printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"make","version":"0"}}}' | VA_NO_AUTO_INDEX=1 "$(CORE_DIR)/bin/va" mcp 2>/dev/null | grep -q '"serverInfo"' \
@@ -69,6 +74,7 @@ install-core:
 uninstall:
 	rm -rf "$(APP_DIR)/Sesame.app" "$(CORE_DIR)"
 	@[ -L "$(BIN_DIR)/va" ] && [ "$$(readlink "$(BIN_DIR)/va")" = "$(CORE_DIR)/bin/va" ] && rm -f "$(BIN_DIR)/va" || true
+	@[ -L "$(BIN_DIR)/va-index" ] && [ "$$(readlink "$(BIN_DIR)/va-index")" = "$(CORE_DIR)/bin/va-index" ] && rm -f "$(BIN_DIR)/va-index" || true
 	@echo "[sesame] removed app and core (settings in ~/.config/voice-agent and the app's defaults are kept)"
 
 clean:

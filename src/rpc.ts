@@ -139,8 +139,7 @@ export async function dispatch(req: RpcRequest, d: ServeDeps): Promise<RpcRespon
         return { jsonrpc: '2.0', id, result: { sample: it ? openedInfo(it) : null } };
       }
       case 'doctor': {
-        const profile = p.profile === 'sesame' || p.profile === 'alfred' ? p.profile : undefined;
-        const checks = await collectChecks({ root: d.root, appRoot: d.appRoot, indexDir: d.indexDir, logDir: d.logDir, home: d.home, run: d.run, skipAlfredTrigger: p.alfredTrigger !== true, profile });
+        const checks = await collectChecks({ root: d.root, appRoot: d.appRoot, indexDir: d.indexDir, logDir: d.logDir, home: d.home, run: d.run });
         const fail = checks.filter((c) => c.level === 'fail').length;
         const warn = checks.filter((c) => c.level === 'warn').length;
         return { jsonrpc: '2.0', id, result: { checks, summary: { total: checks.length, ok: checks.length - fail - warn, warn, fail } } };
