@@ -3,12 +3,7 @@ logs/
 cache.json
 cache.dryrun.json
 dist/
-*.alfredworkflow
 index/
-autoenter/va-autoenter
-autoenter/build/
-bin/va-autoenter
-bin/VA AutoEnter.app/
 node_modules
 .DS_Store
 # personal config never lives in the repo (it belongs in ~/.config/voice-agent/); guard against copies

@@ -8,7 +8,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
 # shellcheck source=bin/va-env
 . "$ROOT/bin/va-env"
-# Alfred 运行脚本时 PATH 很短，找不到版本管理器装的 node；按顺序兜底（VA_NODE 可直接指定，写进 ~/.config/voice-agent/env.sh）
+# 从 GUI 应用或其它启动器运行脚本时 PATH 很短，找不到版本管理器装的 node；按顺序兜底（VA_NODE 可直接指定，写进 ~/.config/voice-agent/env.sh）
 NODE="${VA_NODE:-}"
 if [ -z "$NODE" ]; then
   for c in "$(command -v node 2>/dev/null || true)" "$HOME/.local/share/fnm/aliases/default/bin/node" "$HOME/.volta/bin/node" /opt/homebrew/bin/node /usr/local/bin/node; do

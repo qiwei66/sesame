@@ -1,9 +1,7 @@
-# Sourced by bin/* and scripts/*: per-user integration settings (bundle id prefix, signing identity).
+# Sourced by bin/va and bin/va-index: per-user settings.
 # Personal values live OUTSIDE the repo in ${VA_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/voice-agent}/env.sh, e.g.
-#   export VA_BUNDLE_PREFIX=com.example     # launchd labels / Alfred bundle id / helper bundle id prefix
-#   export VA_SIGN_IDENTITY="Apple Development: Jane Doe (TEAMID1234)"
+#   export VA_NODE=/path/to/node            # if node is not on the default PATH
 VA_CONFIG_DIR="${VA_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/voice-agent}"
 # shellcheck disable=SC1091
 [ -f "$VA_CONFIG_DIR/env.sh" ] && . "$VA_CONFIG_DIR/env.sh"
 export VA_CONFIG_DIR
-export VA_BUNDLE_PREFIX="${VA_BUNDLE_PREFIX:-local.voice-agent}"

@@ -3,7 +3,7 @@
 Sesame（芝麻开门）是一个常驻菜单栏的 macOS 小工具。按热键，屏幕中上方浮出一个面板，说一句或打一句，它从你和 Claude Code / Codex 的对话里把 AI 交付过的产物找出来打开，或者执行一个系统动作。
 
 - 原型：`prototype.html`（单文件，零外部依赖，直接用浏览器打开）
-- 预览图：`png/`（2x，2560×1600，每张不超过 1MB；另附 16:9 的推特裁切（宣传图一律用中性石墨背景，按 `?promo=1` 渲染，不带桌面壁纸；App 状态图仍用桌面壁纸）：设置里接管 ⌘Space `16a-takeover-spotlight(-dark).png` / `16b-takeover-alfred(-dark).png` / `16c-takeover-done(-dark).png`；首次启动开场 `11-first-run-16x9.png` / `11-first-run-dark-16x9.png`，成功态 `03-success-16x9.png` / `03-success-dark-16x9.png`）
+- 预览图：`png/`（2x，2560×1600，每张不超过 1MB；另附 16:9 的推特裁切（宣传图一律用中性石墨背景，按 `?promo=1` 渲染，不带桌面壁纸；App 状态图仍用桌面壁纸）：设置里接管 ⌘Space `16a-takeover-spotlight(-dark).png` / `16c-takeover-done(-dark).png`；首次启动开场 `11-first-run-16x9.png` / `11-first-run-dark-16x9.png`，成功态 `03-success-16x9.png` / `03-success-dark-16x9.png`）
 - 标志定稿：`logo/final/`（`app-icon.svg` / `menubar.svg` / `wordmark.svg` / `AppIcon.appiconset/`）；比稿过程：`png/logo-board.png`、`png/logo-sesame-board.png`、`png/logo-sesame-v3-board.png`
 - 重新截图：`node design/tools/shoot.mjs 1 2 3 3d …`（需要本机 Chrome 开着 9222 调试端口）
 

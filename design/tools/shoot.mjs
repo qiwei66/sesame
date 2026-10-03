@@ -6,7 +6,7 @@ import { homedir } from 'node:os';
 
 const NAMES = { 1: '01-listening', 2: '02-intent', 3: '03-success',  5: '05-info-disk',
   6: '06-candidates', 7: '07-confirm', 8: '08-english', 9: '09-menubar', 0: '10-not-found',
-  4: '11-first-run', '4s': '11c-first-run-shared', c: '17-share-card-proto', h: '11b-first-run-hotkey-taken', t1: '12a-typing-many', t2: '12b-typing-one', t3: '12c-typing-none', v: '13-hold-to-talk', m: '14-mic-permission', s: '15-settings-login', k: '16a-takeover-spotlight', k2: '16b-takeover-alfred', k3: '16c-takeover-done' };
+  4: '11-first-run', '4s': '11c-first-run-shared', c: '17-share-card-proto', h: '11b-first-run-hotkey-taken', t1: '12a-typing-many', t2: '12b-typing-one', t3: '12c-typing-none', v: '13-hold-to-talk', m: '14-mic-permission', s: '15-settings-login', k: '16a-takeover-spotlight', k3: '16c-takeover-done' };
 const OUT = `${homedir()}/.voice-agent-oss/design/png`;
 const FILE = `file://${homedir()}/.voice-agent-oss/design/prototype.html`;
 mkdirSync(OUT, { recursive: true });
