@@ -108,11 +108,11 @@ Sesame 在本机把 AI 交付过的产物收成一个库，打几个字或说一
 
 ```bash
 brew install qiwei66/tap/sesame
-mkdir -p ~/Applications && { [ ! -e ~/Applications/Sesame.app ] || [ -L ~/Applications/Sesame.app ] || mv ~/Applications/Sesame.app ~/Applications/Sesame.app.bak-$(date +%Y%m%d%H%M%S); } && ln -sfn "$(brew --prefix)/opt/sesame/Sesame.app" ~/Applications/Sesame.app && open ~/Applications/Sesame.app
+sesame
 ```
 <!-- tap 仓库是 github.com/qiwei66/homebrew-tap（formula 源文件在 packaging/homebrew/） -->
 
-第二行把 Sesame.app 放进 `~/Applications` 并启动（之前 `make install` 装的旧副本会改名为 `Sesame.app.bak-<时间>` 留着）。Homebrew 会装好 Node.js，在你的 Mac 上从源码编译 App 并 ad-hoc 签名，不弹 Gatekeeper 警告，也不需要苹果开发者账号。
+`sesame` 把 Sesame.app 放进 `~/Applications` 并启动，随时可以再跑（之前 `make install` 装的旧副本会改名为 `Sesame.app.bak-<时间>` 留着）。Homebrew 会装好 Node.js，在你的 Mac 上从源码编译 App 并 ad-hoc 签名，不弹 Gatekeeper 警告，也不需要苹果开发者账号。
 
 也可以从源码装（需要 Node.js 22.18 以上和 Xcode 命令行工具 `xcode-select --install`）：
 

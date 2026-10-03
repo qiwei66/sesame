@@ -221,7 +221,7 @@
         <p class="eyebrow"><span data-l="zh">插件 · MCP</span><span data-l="en">Plugin · MCP</span></p>
         <h2 id="ccH"><span data-l="zh">在 Claude Code 里，<br class="br-d">直接问</span><span data-l="en">Ask right inside<br class="br-d"> Claude Code</span></h2>
         <p><span data-l="zh">Sesame 也能作为插件跑在 Claude Code 里。在任何会话里直接说要找什么，Claude 会去你的产物库里查，再在你的 Mac 上打开。App 装不装都行：没装时插件自己从 Claude Code 和 Codex 的历史里建同样的本地索引；装了就和 App 共用一份索引。</span><span data-l="en">Sesame also runs inside Claude Code as a plugin. Ask in plain words in any session and Claude looks it up in your library, then opens it on your Mac. The app is optional: without it, the plugin builds the same local index from your Claude Code and Codex history; with it, both share one index.</span></p>
-        <div class="cmd cmd-wrap">
+        <div class="cmd">
           <span class="prompt" aria-hidden="true">$</span>
           <code id="pluginCmd">claude plugin marketplace add qiwei66/sesame &amp;&amp; claude plugin install sesame@sesame</code>
           <button class="copy" type="button" data-copy="pluginCmd" aria-label="Copy">
@@ -304,10 +304,10 @@
               </div>
             </li>
             <li>
-              <p class="step-t"><span data-l="zh">放进 ~/Applications 并启动（brew 装完也会提示这一行）</span><span data-l="en">Put it in ~/Applications and start it (brew prints this line too)</span></p>
-              <div class="cmd cmd-wrap">
+              <p class="step-t"><span data-l="zh">启动（同时放进 ~/Applications，可重复运行）</span><span data-l="en">Start it (also puts it in ~/Applications; safe to run again)</span></p>
+              <div class="cmd">
                 <span class="prompt" aria-hidden="true">$</span>
-                <code id="linkCmd">mkdir -p ~/Applications &amp;&amp; { [ ! -e ~/Applications/Sesame.app ] || [ -L ~/Applications/Sesame.app ] || mv ~/Applications/Sesame.app ~/Applications/Sesame.app.bak-$(date +%Y%m%d%H%M%S); } &amp;&amp; ln -sfn "$(brew --prefix)/opt/sesame/Sesame.app" ~/Applications/Sesame.app &amp;&amp; open ~/Applications/Sesame.app</code>
+                <code id="linkCmd">sesame</code>
                 <button class="copy" type="button" data-copy="linkCmd" aria-label="Copy">
                   <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-copy"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
                   <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-ok"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>

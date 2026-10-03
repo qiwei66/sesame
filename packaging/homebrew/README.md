@@ -4,7 +4,7 @@ Homebrew tap for [Sesame](https://github.com/qiwei66/sesame): the menu-bar libra
 
 ```bash
 brew install qiwei66/tap/sesame
-open "$(brew --prefix)/opt/sesame/Sesame.app"
+sesame
 ```
 
 The formula builds the app from source on your Mac (Xcode Command Line Tools, `xcode-select --install`) and
@@ -39,7 +39,7 @@ README.md
 
 ```bash
 brew install qiwei66/tap/sesame
-open "$(brew --prefix)/opt/sesame/Sesame.app"
+sesame
 ```
 
 在你的 Mac 上从源码编译并 ad-hoc 签名（需要 Xcode 命令行工具 `xcode-select --install`），不弹 Gatekeeper 警告，也不需要苹果开发者账号；Node.js 作为依赖自动装上。索引放在 `~/Library/Application Support/Sesame`，`brew upgrade` 不会丢。卸载用 `brew uninstall sesame`，`~/.config/voice-agent` 里的设置会保留。

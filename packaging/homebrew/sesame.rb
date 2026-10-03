@@ -5,9 +5,10 @@
 class Sesame < Formula
   desc "Find anything Claude Code & Codex made for you — just say it"
   homepage "https://github.com/qiwei66/sesame"
-  url "https://github.com/qiwei66/sesame/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "c684181c8c320531a4c8b3e9f8311e2bf590d952b87b31bac70fbf83f65adc64"
+  url "https://codeload.github.com/qiwei66/sesame/tar.gz/refs/tags/v0.2.1"
+  sha256 "185529064aa0c1f45449da9f0b02eb2faf023a6c0cd5bd41b8bbc49a8dac05ea"
   license "MIT"
+  revision 1 # adds the `sesame` command; drop at the next version bump
   head "https://github.com/qiwei66/sesame.git", branch: "main"
 
   # Swift comes from the Xcode Command Line Tools, which Homebrew already requires; full Xcode is not needed.
@@ -29,13 +30,33 @@ class Sesame < Formula
     touch libexec/".sesame-install"
     # the app finds the core at $(brew --prefix)/bin/va on its own (CoreLocator), no corePath setting needed
     (bin/"va").write_env_script libexec/"bin/va", PATH: "#{Formula["node"].opt_bin}:$PATH"
+
+    # `sesame`: link Sesame.app into ~/Applications and open it; safe to run again
+    (bin/"sesame").write <<~SH
+      #!/bin/bash
+      set -euo pipefail
+      case "${1:-}" in
+        "") ;;
+        -h|--help) echo "sesame: put Sesame.app in ~/Applications (a link to this Homebrew install) and open it; safe to run again"; exit 0 ;;
+        *) echo "sesame: unknown option '$1' (try sesame --help)" >&2; exit 2 ;;
+      esac
+      dest="$HOME/Applications/Sesame.app"
+      mkdir -p "$HOME/Applications"
+      if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+        bak="$dest.bak-$(date +%Y%m%d%H%M%S)"
+        mv "$dest" "$bak"
+        echo "sesame: kept the older copy as $bak"
+      fi
+      ln -sfn "#{opt_prefix}/Sesame.app" "$dest"
+      open "$dest"
+    SH
+    chmod 0755, bin/"sesame"
   end
 
   def caveats
     <<~EOS
-      One step left: put Sesame in ~/Applications and start it.
-        mkdir -p ~/Applications && { [ ! -e ~/Applications/Sesame.app ] || [ -L ~/Applications/Sesame.app ] || mv ~/Applications/Sesame.app ~/Applications/Sesame.app.bak-$(date +%Y%m%d%H%M%S); } && ln -sfn #{opt_prefix}/Sesame.app ~/Applications/Sesame.app && open ~/Applications/Sesame.app
-      (An older Sesame.app copied there by `make install` is kept as Sesame.app.bak-<time>; delete it when you like.)
+      Run `sesame` to open Sesame (it puts Sesame.app in ~/Applications).
+      An older Sesame.app copied there by `make install` is kept as Sesame.app.bak-<time>; delete it when you like.
 
       Hot key: ⌥⇧Space (switch to ⌘Space in Settings › Hot key).
     EOS
@@ -47,6 +68,7 @@ class Sesame < Formula
     init = %Q({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"brew","version":"0"}}}\n)
     assert_match "\"serverInfo\"", pipe_output("env VA_NO_AUTO_INDEX=1 #{bin}/va mcp", init)
     assert_predicate prefix/"Sesame.app/Contents/MacOS/Sesame", :executable?
+    assert_match "~/Applications", shell_output("#{bin}/sesame --help")
     system "codesign", "--verify", prefix/"Sesame.app"
   end
 end

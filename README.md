@@ -108,11 +108,11 @@ Sesame keeps a local library of every artifact your AI delivered, so a few words
 
 ```bash
 brew install qiwei66/tap/sesame
-mkdir -p ~/Applications && { [ ! -e ~/Applications/Sesame.app ] || [ -L ~/Applications/Sesame.app ] || mv ~/Applications/Sesame.app ~/Applications/Sesame.app.bak-$(date +%Y%m%d%H%M%S); } && ln -sfn "$(brew --prefix)/opt/sesame/Sesame.app" ~/Applications/Sesame.app && open ~/Applications/Sesame.app
+sesame
 ```
 <!-- the tap is github.com/qiwei66/homebrew-tap (formula source: packaging/homebrew/) -->
 
-The second line puts Sesame.app in `~/Applications` and starts it (an older copy from `make install` is kept as
+`sesame` puts Sesame.app in `~/Applications` and starts it; run it again any time (an older copy from `make install` is kept as
 `Sesame.app.bak-<time>`). Homebrew brings Node.js, builds the app from source on your Mac and ad-hoc signs it: no Gatekeeper warning, no Apple
 Developer account needed.
 
