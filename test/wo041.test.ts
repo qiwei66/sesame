@@ -195,7 +195,7 @@ test('AI 做的 vs 只是提到的：服务/页面/文件算；PR 要有开了/�
   assert.equal(madeByAI(item({ url: 'https://github.com/hardikpandya/stop-slop' })), false);
 });
 
-test('打字列表默认只给 AI 做的；说了「网页/链接/文章」或 AI 的一条都没对上，才把外部网页放进来（放最后）', async () => {
+test('打字列表只给 AI 做的；说了「网页/链接/文章」才把外部网页放进来（放最后）', async () => {
   const { searchLive } = await import('../src/saved.ts');
   const now = new Date('2026-10-02T00:00:00Z');
   const items = [
@@ -206,7 +206,8 @@ test('打字列表默认只给 AI 做的；说了「网页/链接/文章」或 A
   assert.deepEqual(searchLive('看', items, {}, now).map((c) => c.item.key), ['dash']);
   assert.deepEqual(searchLive('看 网页', items, {}, now).map((c) => c.item.key)[0], 'dash', '要网页时 AI 的仍在前');
   assert.ok(searchLive('看 网页', items, {}, now).some((c) => c.item.key === 'blog'));
-  assert.deepEqual(searchLive('必看', items, {}, now).map((c) => c.item.key), ['blog'], 'AI 的一条都没对上 → 外部网页兜底');
+  assert.deepEqual(searchLive('必看', items, {}, now), [], 'AI 的一条都没对上也不拿外部网页兜底（WO-20261003-040）');
+  assert.deepEqual(searchLive('必看 网页', items, {}, now).map((c) => c.item.key), ['blog'], '明说要网页时才给');
 });
 
 test('标题去掉 @提及', async () => {

@@ -241,7 +241,7 @@ enum Icons {
         case .artifact: return "sparkle"
         case .file, .files: return "doc"
         case .system: return "externaldrive"
-        case .app: return "app"
+        case .app: return "square.grid.2x2"
         case .candidates, .results: return "magnifyingglass"
         }
     }
@@ -417,6 +417,9 @@ struct Favicon: View {
             case .artifact:
                 RoundedRectangle(cornerRadius: Tok.rTile).fill(Tok.claudeBg)
                     .overlay(Image(systemName: "sparkle").font(.ui(15)).foregroundColor(Tok.claudeInk))
+            case .app where item.url != nil:
+                // the app's own icon, like Spotlight (already has its shape and shadow: no tile behind it)
+                Image(nsImage: AppIcons.icon(item.url ?? "")).resizable().interpolation(.high).frame(width: 34, height: 34)
             default:
                 RoundedRectangle(cornerRadius: Tok.rTile).fill(Tok.card)
                     .overlay(RoundedRectangle(cornerRadius: Tok.rTile).strokeBorder(Tok.hairStrong, lineWidth: 0.5))
@@ -426,6 +429,19 @@ struct Favicon: View {
         .frame(width: 34, height: 34)
     }
     static func isDashboard(_ t: String) -> Bool { t.range(of: "看板|大盘|仪表盘|dashboard|board", options: [.regularExpression, .caseInsensitive]) != nil }
+}
+
+/// Real app icons (`NSWorkspace.icon(forFile:)`), cached per bundle path for the life of the process
+@MainActor
+enum AppIcons {
+    private static var cache: [String: NSImage] = [:]
+    static func icon(_ path: String) -> NSImage {
+        if let i = cache[path] { return i }
+        let i = NSWorkspace.shared.icon(forFile: path)
+        i.size = NSSize(width: 64, height: 64)
+        cache[path] = i
+        return i
+    }
 }
 
 struct CandidateList: View {

@@ -9,7 +9,7 @@
 "kind.artifact" = "Claude 页面";
 "kind.file" = "文件";
 "kind.system" = "系统信息";
-"kind.app" = "App";
+"kind.app" = "应用";
 "kind.candidates" = "%d 个候选";
 "kind.results" = "%d 个结果";
 "kind.files" = "%d 个文件";

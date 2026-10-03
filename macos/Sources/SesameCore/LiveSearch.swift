@@ -24,8 +24,11 @@ public enum LiveSearch {
 
     /// ↩ on the live list.
     public enum ReturnAction: Equatable, Sendable { case submit(String), open(Int) }
+    /// An app row on the selection always opens: app rows only match the whole typed name, and app names are often
+    /// longer than six characters or have spaces ("typeless", "Visual Studio Code"), which would read as a sentence.
     public static func returnAction(query: String, list: LiveList) -> ReturnAction {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        if list.selectedItem?.kind == .app { return .open(list.selected) }
         if isSentence(q) || list.selectedItem == nil { return .submit(q.isEmpty ? list.query : q) }
         return .open(list.selected)
     }

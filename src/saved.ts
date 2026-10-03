@@ -403,12 +403,14 @@ export function searchLive(query: string, items: SavedItem[], aliases: Aliases, 
       byKey.set(it.key, { item: it, score, aliasHit: false });
     }
   }
-  // what the AI made comes first and alone; links that were only mentioned join (at the end) when the user asks for
-  // web pages / links / articles, or when nothing the AI made matches
+  // the live list shows what the AI made for the user. Its own work files (briefs, scratchpad output) fill in only when
+  // nothing else matches. Links that were only mentioned or read (a GitHub repo someone pasted, a blog post) join, at
+  // the end, only when the user asks for web pages / links / articles: never as a "nothing matched" fallback, so an app
+  // name typed into ⌘Space ("typeless") does not surface a stranger's repo (docs/live-ranking.md)
   const all = [...byKey.values()].sort((a, b) => b.score - a.score || KIND_RANK[b.item.kind] - KIND_RANK[a.item.kind]);
   const made = all.filter((c) => isProduct(c.item));
   const wantsWeb = WEB_WORDS.test(query);
-  const ordered = made.length === 0 || wantsWeb ? [...made, ...all.filter((c) => !isProduct(c.item))] : made;
+  const ordered = wantsWeb ? [...made, ...all.filter((c) => !isProduct(c.item))] : made.length > 0 ? made : all.filter((c) => madeByAI(c.item));
   // one row per name: the same dashboard seen as a service, a Claude page and a file shows once (the higher score)
   const seen = new Set<string>();
   const out: Candidate[] = [];

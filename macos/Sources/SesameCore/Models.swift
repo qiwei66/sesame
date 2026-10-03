@@ -134,9 +134,12 @@ public struct SearchHit: Codable, Equatable, Sendable {
     public let score: Double?
     public let needsAuth: Bool?
     public let lastSeen: String?
+    /// live search: the AI made it (false = a link that was only mentioned or read). nil = older core, counts as made
+    public let made: Bool?
 
-    public init(key: String, kind: String, title: String, url: String?, score: Double? = nil, needsAuth: Bool? = nil, lastSeen: String? = nil) {
+    public init(key: String, kind: String, title: String, url: String?, score: Double? = nil, needsAuth: Bool? = nil, lastSeen: String? = nil, made: Bool? = nil) {
         self.key = key; self.kind = kind; self.title = title; self.url = url; self.score = score; self.needsAuth = needsAuth; self.lastSeen = lastSeen
+        self.made = made
     }
 }
 
