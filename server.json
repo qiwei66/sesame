@@ -1,0 +1,12 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.qiwei66/sesame",
+  "title": "Sesame",
+  "description": "Search and open dashboards, reports, decks and PRs that Claude Code and Codex made on your Mac.",
+  "repository": {
+    "url": "https://github.com/qiwei66/sesame",
+    "source": "github"
+  },
+  "websiteUrl": "https://qiwei66.github.io/sesame/",
+  "version": "0.2.1"
+}
