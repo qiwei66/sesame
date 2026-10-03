@@ -22,7 +22,7 @@
   </picture>
 </p>
 
-<p align="center"><a href="https://github.com/qiwei66/sesame/releases/download/v0.2.1/sesame-promo-zh.mp4">▶ 看完整宣传片（44 秒）</a></p>
+<p align="center"><a href="https://github.com/qiwei66/sesame/releases/download/v0.2.1/sesame-promo-zh.mp4">▶ 看完整宣传片（45 秒）</a></p>
 
 AI 帮你做了看板、报告、PPT、网站、PR，过一周就全埋在长长的会话里了。
 Sesame 在本机把 AI 交付过的产物收成一个库，打几个字或说一句话就能找回来，打开的是产物本身，不是当时那段对话。
