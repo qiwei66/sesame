@@ -12,3 +12,4 @@ node_modules
 /env.sh
 /skills/*.local.ts
 __pycache__/
+/_site/

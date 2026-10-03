@@ -159,11 +159,14 @@ public enum PanelPhase: Equatable, Sendable {
 }
 
 /// The "share my number" card (1200 × 675, the size X / Twitter shows uncropped). Only counts go on it: no titles,
-/// paths or names. The footer points to the repository, the only public address.
+/// paths or names. The footer points to the project's two public addresses: the site and the repository.
 public enum ShareCard {
     public static let width = 1200
     public static let height = 675
+    public static let site = "qiwei66.github.io/sesame"
     public static let repo = "github.com/qiwei66/sesame"
+    /// The address line under "Sesame" on the card
+    public static let footer = "\(site)  ·  \(repo)"
 
     /// Groups printed on the card: the first-run groups that are not empty, in the panel's order
     public static func groups(_ g: [IntroGroupKind: Int]) -> [IntroGroupKind] { IntroCounts.visible(g) }

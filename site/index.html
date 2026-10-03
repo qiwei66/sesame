@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- The zh/ copy of this page is made by site/assemble.sh: every tag with data-zh gets that value as its content. -->
+<title data-zh="Sesame · 别再翻会话了" data-en="Sesame · Stop digging through chats">Sesame · Stop digging through chats</title>
+<meta name="description" content="Your library of AI creations. Sesame keeps a local record of every artifact Claude Code and Codex delivered: hold a hot key, say a sentence, and it opens. Open source, macOS 13+." data-zh="你的 AI 产物库。Sesame 在本机记下 Claude Code、Codex 交付过的每份产物：按住热键说一句，就调出来。开源，macOS 13+。">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F6F5F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121214" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="assets/sesame-icon.png">
+<link rel="apple-touch-icon" href="assets/sesame-icon.png">
+<link rel="canonical" href="https://qiwei66.github.io/sesame/" data-zh="https://qiwei66.github.io/sesame/zh/">
+<link rel="alternate" hreflang="en" href="https://qiwei66.github.io/sesame/">
+<link rel="alternate" hreflang="zh-CN" href="https://qiwei66.github.io/sesame/zh/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sesame">
+<meta property="og:url" content="https://qiwei66.github.io/sesame/" data-zh="https://qiwei66.github.io/sesame/zh/">
+<meta property="og:locale" content="en_US" data-zh="zh_CN">
+<meta property="og:title" content="Sesame · Stop digging through chats" data-zh="Sesame · 别再翻会话了">
+<meta property="og:description" content="Just say it. It's there. Every artifact Claude Code and Codex delivered, kept on your Mac and one sentence away." data-zh="动动嘴，就调出来。Claude Code、Codex 交付过的每份产物，一句话就找回来。">
+<meta property="og:image" content="https://qiwei66.github.io/sesame/assets/share-en-light.png" data-zh="https://qiwei66.github.io/sesame/assets/share-zh-light.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta property="og:image:alt" content="My 313 AI creations, one sentence away." data-zh="我的 313 个 AI 产物，动动嘴就调出来。">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sesame · Stop digging through chats" data-zh="Sesame · 别再翻会话了">
+<meta name="twitter:description" content="Just say it. It's there. Every artifact Claude Code and Codex delivered, one sentence away." data-zh="动动嘴，就调出来。Claude Code、Codex 交付过的每份产物，一句话就找回来。">
+<meta name="twitter:image" content="https://qiwei66.github.io/sesame/assets/share-en-light.png" data-zh="https://qiwei66.github.io/sesame/assets/share-zh-light.png">
+<script>
+/* Pick the language before the first paint: ?lang= > your last choice > this page's default (zh/ copy) > browser */
+(function () {
+  var d = document.documentElement, l = null;
+  try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'zh' || q === 'en') l = q; } catch (e) { l = null; }
+  if (!l) { try { var s = localStorage.getItem('sesame-lang'); if (s === 'zh' || s === 'en') l = s; } catch (e) { l = null; } }
+  if (!l && d.getAttribute('data-default-lang')) l = d.getAttribute('data-default-lang');
+  if (!l) { var n = (navigator.languages && navigator.languages[0]) || navigator.language || 'en'; l = /^zh/i.test(n) ? 'zh' : 'en'; }
+  d.setAttribute('data-lang', l);
+  d.classList.add('js');
+  d.setAttribute('lang', l === 'zh' ? 'zh-CN' : 'en');
+})();
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main"><span data-l="zh">跳到正文</span><span data-l="en">Skip to content</span></a>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="Sesame">
+      <img src="assets/sesame-icon.png" width="28" height="28" alt="">
+      <span>Sesame</span>
+    </a>
+    <nav class="links" aria-label="Sections">
+      <a href="#features"><span data-l="zh">功能</span><span data-l="en">Features</span></a>
+      <a href="#claude-code">Claude Code</a>
+      <a href="#privacy"><span data-l="zh">隐私</span><span data-l="en">Privacy</span></a>
+      <a href="#install"><span data-l="zh">安装</span><span data-l="en">Install</span></a>
+    </nav>
+    <div class="nav-end">
+      <a class="gh" href="https://github.com/qiwei66/sesame" aria-label="GitHub">
+        <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span class="gh-t">GitHub</span>
+      </a>
+      <button class="lang" id="langBtn" type="button" aria-label="切换到英文 / Switch to Chinese">
+        <span class="lz" aria-hidden="true">中</span><i aria-hidden="true">/</i><span class="le" aria-hidden="true">EN</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-in">
+      <p class="kicker reveal">
+        <span class="seed" aria-hidden="true"><img src="assets/sesame-icon.png" width="22" height="22" alt=""></span>
+        <span data-l="zh">别再翻会话了</span><span data-l="en">Stop digging through chats</span>
+      </p>
+      <h1 class="reveal">
+        <span data-l="zh">动动嘴，<br class="br-m">就调出来。</span>
+        <span data-l="en">Just say it.<br class="br-m"> It's there.</span>
+      </h1>
+      <p class="lede reveal">
+        <span data-l="zh">Claude Code、Codex 每天替你交付看板、报告、网站、PR 和文件，转眼就淹没在对话流里。Sesame 在本机记下每一份产物，按住热键说一句，或者打几个字，它就调出来。</span>
+        <span data-l="en">Claude Code and Codex deliver dashboards, reports, sites, PRs and files every day, and they sink into the chat stream. Sesame keeps a local record of every artifact. Hold a hot key and say a sentence, or type a few letters, and it opens.</span>
+      </p>
+
+      <div class="say reveal" aria-hidden="true">
+        <span class="say-mark"><img src="assets/sesame-icon.png" width="20" height="20" alt=""></span>
+        <span class="say-text" id="sayText"></span><span class="caret"></span>
+        <span class="say-kbd"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>Space</kbd></span>
+      </div>
+
+      <div class="cta reveal">
+        <div class="cmd cmd-hero">
+          <span class="prompt" aria-hidden="true">$</span>
+          <code id="brewCmd">brew install qiwei66/tap/sesame</code>
+          <button class="copy" type="button" data-copy="brewCmd" aria-label="Copy">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-copy"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-ok"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="copy-t"><span data-l="zh">复制</span><span data-l="en">Copy</span></span>
+          </button>
+        </div>
+        <div class="cta-links">
+          <a class="btn btn-ghost" href="#install"><span data-l="zh">其他装法</span><span data-l="en">Other ways to install</span></a>
+          <a class="btn btn-ghost" href="#film">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+            <span data-l="zh">看 44 秒宣传片</span><span data-l="en">Watch the 44 s film</span>
+          </a>
+        </div>
+      </div>
+      <ul class="facts reveal">
+        <li>macOS 13+</li>
+        <li><span data-l="zh">MIT 开源</span><span data-l="en">Open source, MIT</span></li>
+        <li><span data-l="zh">索引只存本机</span><span data-l="en">Index stays on your Mac</span></li>
+      </ul>
+    </div>
+
+    <div class="wrap">
+      <figure class="stage stage-hero reveal">
+        <img class="shot" data-shot="hero-firstrun" width="1100" height="706" fetchpriority="high"
+             data-alt-zh="第一次打开 Sesame：「动动嘴，就调出来。」下面是 313 个 AI 产物的计数从 0 滚上去，分成看板、报告、网站、PR 和文件"
+             data-alt-en="Sesame's first run: 'Just say it. It's there.' with a count of 313 AI creations rolling up from zero, split into dashboards, reports, sites, PRs and files"
+             alt="">
+      </figure>
+    </div>
+  </section>
+
+  <!-- Count -->
+  <section class="count" aria-labelledby="countH">
+    <div class="wrap count-in">
+      <h2 id="countH" class="count-line reveal">
+        <span class="num" id="countNum" data-to="313">313</span>
+        <span data-l="zh">个 AI 产物，<br class="br-m">一句话的事。</span>
+        <span data-l="en">AI creations,<br class="br-m"> one sentence away.</span>
+      </h2>
+      <p class="count-note reveal">
+        <span data-l="zh">AI 帮你做了看板、报告、PPT、网站、PR，过一周就全埋在长长的会话里了。第一次打开，Sesame 会读一遍你已有的 Claude Code 和 Codex 记录，数出你自己的数字。打开的是产物本身，不是当时那段对话。</span>
+        <span data-l="en">Your AI builds dashboards, reports, decks, sites and pull requests. A week later they are buried in long chats. On first launch Sesame reads your existing Claude Code and Codex history and counts your own number. What opens is the artifact itself, not the chat it came from.</span>
+      </p>
+      <p class="count-fine reveal"><span data-l="zh">页面里的数字和产物名都是演示数据。</span><span data-l="en">Numbers and titles on this page are demo data.</span></p>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features" aria-label="Features">
+    <div class="wrap">
+      <article class="feat reveal">
+        <div class="feat-copy">
+          <p class="feat-k">01</p>
+          <h3><span data-l="zh">按住热键，直接说</span><span data-l="en">Hold the hot key and say it</span></h3>
+          <p><span data-l="zh">轻按打开面板打字；按住说，松开就发送。说「打开上周那个交易大盘」，打开的是大盘本身。</span><span data-l="en">Tap it to type; hold it to talk, let go to send. "Open last week's trading dashboard" opens the dashboard itself.</span></p>
+          <p class="keys"><span class="kg"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>Space</kbd></span><span class="keys-t"><span data-l="zh">默认热键，可在设置里换成</span><span data-l="en">by default; switch to</span></span><span class="kg"><kbd>⌘</kbd><kbd>Space</kbd></span><span class="keys-t" data-l="en">in Settings</span></p>
+        </div>
+        <figure class="stage"><img class="shot" data-shot="voice" width="740" height="240" loading="lazy"
+          data-alt-zh="按住热键：声波和实时转写，松开后打开交易大盘" data-alt-en="Holding the hot key: a waveform and a live transcript, then on release the Trading Dashboard opens" alt=""></figure>
+      </article>
+
+      <article class="feat feat-r reveal">
+        <div class="feat-copy">
+          <p class="feat-k">02</p>
+          <h3><span data-l="zh">边打字边出结果</span><span data-l="en">Type, and it's already there</span></h3>
+          <p><span data-l="zh">打第一个字就有结果。↑ ↓ 选，↵ 打开。本地对不上时，按 ↵ 让 Sesame 去全部记录里找。</span><span data-l="en">Results show up with the first letters. ↑ ↓ to pick, ↵ to open. If no local match fits, ↵ lets Sesame search your full history.</span></p>
+        </div>
+        <figure class="stage"><img class="shot" data-shot="typing" width="740" height="374" loading="lazy"
+          data-alt-zh="打「大」，交易大盘排在第一；打到「交易大」只剩它；打「交易大盘 v2」时提示去全部记录里找" data-alt-en="Typing 'tra' lists the Trading Dashboard first; 'trading da' narrows to it; 'trading dashboard v2' offers a full search" alt=""></figure>
+      </article>
+
+      <article class="feat reveal">
+        <div class="feat-copy">
+          <p class="feat-k">03</p>
+          <h3><span data-l="zh">不止一个？挑一个</span><span data-l="en">More than one match? Pick one</span></h3>
+          <p><span data-l="zh">名字都对得上的不止一个时，给你一个短列表，不瞎猜；一个都对不上就直接说没找到，不拿凑数的顶上。</span><span data-l="en">When several names fit, you get a short list instead of a guess; when none fits, it says so instead of offering filler.</span></p>
+          <ul class="kinds" aria-label="Kinds">
+            <li><span data-l="zh">本机服务</span><span data-l="en">Local services</span></li>
+            <li><span data-l="zh">Claude 页面</span><span data-l="en">Claude pages</span></li>
+            <li><span data-l="zh">文件</span><span data-l="en">Files</span></li>
+            <li>PR</li>
+            <li><span data-l="zh">网站</span><span data-l="en">Sites</span></li>
+            <li><span data-l="zh">在线文档</span><span data-l="en">Online docs</span></li>
+          </ul>
+        </div>
+        <figure class="stage"><img class="shot" data-shot="pick" width="740" height="348" loading="lazy"
+          data-alt-zh="交易大盘有三个候选，方向键移动，回车打开" data-alt-en="Three candidates for the trading dashboard; arrow keys move the selection and Return opens it" alt=""></figure>
+      </article>
+
+      <article class="feat feat-r reveal">
+        <div class="feat-copy">
+          <p class="feat-k">04</p>
+          <h3><span data-l="zh">分享你的数字</span><span data-l="en">Share your number</span></h3>
+          <p><span data-l="zh">开场页的「分享」把你的数字做成一张 1200×675 的图，存进「下载」并复制好，直接贴进帖子。图上只有计数，没有任何标题、路径或名字。</span><span data-l="en">Share on the first-run panel turns your number into a 1200×675 image, saves it to Downloads and copies it, ready to paste into a post. Only counts are on it: no titles, paths or names.</span></p>
+        </div>
+        <figure class="stage stage-card"><img class="shot" data-shot="share" data-ext="png" width="1200" height="675" loading="lazy"
+          data-alt-zh="分享卡：「我的 313 个 AI 产物，动动嘴就调出来。」下面是按类型的计数" data-alt-en="Share card: 'My 313 AI creations, one sentence away.' with counts by type" alt=""></figure>
+      </article>
+    </div>
+  </section>
+
+  <!-- Film -->
+  <section class="film" id="film" aria-labelledby="filmH">
+    <div class="wrap">
+      <h2 id="filmH" class="film-h reveal"><span data-l="zh">44 秒看懂 Sesame</span><span data-l="en">Sesame in 44 seconds</span></h2>
+      <div class="player reveal" id="player">
+        <video id="promo" playsinline preload="none" width="1280" height="720" aria-label="Sesame promo film"></video>
+        <button class="play" id="playBtn" type="button">
+          <span class="play-pill">
+            <span class="play-ring" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg></span>
+            <span class="play-t"><span data-l="zh">播放宣传片 · 44 秒 · 有声音</span><span data-l="en">Play the film · 44 s · sound on</span></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Claude Code -->
+  <section class="cc" id="claude-code" aria-labelledby="ccH">
+    <div class="wrap cc-in">
+      <div class="cc-copy reveal">
+        <p class="eyebrow"><span data-l="zh">插件 · MCP</span><span data-l="en">Plugin · MCP</span></p>
+        <h2 id="ccH"><span data-l="zh">在 Claude Code 里，<br class="br-d">直接问</span><span data-l="en">Ask right inside<br class="br-d"> Claude Code</span></h2>
+        <p><span data-l="zh">Sesame 也能作为插件跑在 Claude Code 里。在任何会话里直接说要找什么，Claude 会去你的产物库里查，再在你的 Mac 上打开。App 装不装都行：没装时插件自己从 Claude Code 和 Codex 的历史里建同样的本地索引；装了就和 App 共用一份索引。</span><span data-l="en">Sesame also runs inside Claude Code as a plugin. Ask in plain words in any session and Claude looks it up in your library, then opens it on your Mac. The app is optional: without it, the plugin builds the same local index from your Claude Code and Codex history; with it, both share one index.</span></p>
+        <div class="cmd cmd-wrap">
+          <span class="prompt" aria-hidden="true">$</span>
+          <code id="pluginCmd">claude plugin marketplace add qiwei66/sesame &amp;&amp; claude plugin install sesame@sesame</code>
+          <button class="copy" type="button" data-copy="pluginCmd" aria-label="Copy">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-copy"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-ok"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="copy-t"><span data-l="zh">复制</span><span data-l="en">Copy</span></span>
+          </button>
+        </div>
+        <p class="fine"><span data-l="zh">三个工具：<code>search_artifacts</code>、<code>open_artifact</code>、<code>artifact_stats</code>。其它 MCP 客户端用 <code>va mcp</code> 跑同一个服务，见</span><span data-l="en">Three tools: <code>search_artifacts</code>, <code>open_artifact</code> and <code>artifact_stats</code>. Any other MCP client can run the same server with <code>va mcp</code>; see</span> <a href="https://github.com/qiwei66/sesame/blob/main/docs/mcp.md">docs/mcp.md</a></p>
+      </div>
+      <div class="chat reveal" role="group" aria-label="Example">
+        <div class="msg me"><p><span data-l="zh">上周那个看板在哪</span><span data-l="en">Where is the trading dashboard from last week?</span></p></div>
+        <div class="msg ai">
+          <p class="tool">search_artifacts → open_artifact</p>
+          <p><span data-l="zh">找到了：<b>Trading Dashboard</b>，本机服务 <code>http://127.0.0.1:8787</code>，上周末（09-27）最后用过，已经在浏览器里打开。</span><span data-l="en">Found it: your <b>Trading Dashboard</b> is a local web service at <code>http://127.0.0.1:8787</code>, last seen on September 27. It's opening in your browser now.</span></p>
+        </div>
+        <div class="msg me"><p><span data-l="zh">把我昨天做的报告打开</span><span data-l="en">Open the report I made yesterday</span></p></div>
+        <div class="msg ai">
+          <p class="tool">search_artifacts → open_artifact</p>
+          <p><span data-l="zh">找到了你昨天的报告 <b>Q3 sales report</b>（Markdown 文件），已为你打开。</span><span data-l="en">Found yesterday's report, <b>Q3 sales report</b> (a Markdown file), and opened it.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="privacy" id="privacy" aria-labelledby="pvH">
+    <div class="wrap">
+      <h2 id="pvH" class="sec-h reveal"><span data-l="zh">你的记录，留在你的 Mac 上</span><span data-l="en">Your history stays on your Mac</span></h2>
+      <div class="pv-grid">
+        <div class="pv reveal">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3" y="4.5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 20h7M12 16.5V20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <h3><span data-l="zh">索引只在本机</span><span data-l="en">Index on your Mac</span></h3>
+          <p><span data-l="zh">索引存在 <code>~/Library/Application Support/Sesame</code>，不会上传。</span><span data-l="en">The index lives in <code>~/Library/Application Support/Sesame</code> and is never uploaded.</span></p>
+        </div>
+        <div class="pv reveal">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          <h3><span data-l="zh">只读两个目录</span><span data-l="en">Reads two folders</span></h3>
+          <p><span data-l="zh">只读 <code>~/.claude/projects</code> 和 <code>~/.codex/sessions</code>，从不往里写。</span><span data-l="en">Only <code>~/.claude/projects</code> and <code>~/.codex/sessions</code>, and it never writes to them.</span></p>
+        </div>
+        <div class="pv reveal">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <h3><span data-l="zh">模型可配可不配</span><span data-l="en">A model is optional</span></h3>
+          <p><span data-l="zh">配了的话，发出去的只有你说的那句话、已装 App 的名字，以及本地拿不准时各候选的类型、标题和几个关键词；完整链接、文件路径、剪贴板都不发。</span><span data-l="en">If you set one up, it gets your sentence, your app names and, when local search can't decide, each candidate's type, title and a few keywords. Never full links, file paths or your clipboard.</span></p>
+        </div>
+        <div class="pv reveal">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6.5l-3 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3><span data-l="zh">开源，MIT</span><span data-l="en">Open source, MIT</span></h3>
+          <p><span data-l="zh">每一行代码都在 GitHub 上，可以自己读、自己编译。</span><span data-l="en">Every line is on GitHub. Read it, build it yourself.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section class="install" id="install" aria-labelledby="inH">
+    <div class="wrap install-in">
+      <div class="in-copy reveal">
+        <h2 id="inH" class="sec-h"><span data-l="zh">装上就有</span><span data-l="en">Useful the moment you install it</span></h2>
+        <p><span data-l="zh">Homebrew 会装好 Node.js，在你的 Mac 上从源码编译 App 并 ad-hoc 签名，不弹 Gatekeeper 警告，也不需要苹果开发者账号。</span><span data-l="en">Homebrew brings Node.js, builds the app from source on your Mac and ad-hoc signs it: no Gatekeeper warning, no Apple Developer account needed.</span></p>
+        <p class="fine"><span data-l="zh">需要 macOS 13 或更新版本。热键默认 ⌥⇧Space，可在「设置 → 热键」里换成 ⌘Space。</span><span data-l="en">Needs macOS 13 or later. The hot key is ⌥⇧Space; switch to ⌘Space in Settings › Hot key.</span></p>
+      </div>
+      <div class="in-box reveal">
+        <div class="tabs" role="tablist" aria-label="Install method">
+          <button role="tab" id="tab-brew" aria-controls="pane-brew" aria-selected="true" type="button">Homebrew</button>
+          <button role="tab" id="tab-src" aria-controls="pane-src" aria-selected="false" tabindex="-1" type="button"><span data-l="zh">源码</span><span data-l="en">From source</span></button>
+        </div>
+        <div class="pane" role="tabpanel" id="pane-brew" aria-labelledby="tab-brew">
+          <ol class="steps">
+            <li>
+              <p class="step-t"><span data-l="zh">装 Sesame</span><span data-l="en">Install Sesame</span></p>
+              <div class="cmd">
+                <span class="prompt" aria-hidden="true">$</span>
+                <code id="brewCmd2">brew install qiwei66/tap/sesame</code>
+                <button class="copy" type="button" data-copy="brewCmd2" aria-label="Copy">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-copy"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-ok"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="copy-t"><span data-l="zh">复制</span><span data-l="en">Copy</span></span>
+                </button>
+              </div>
+            </li>
+            <li>
+              <p class="step-t"><span data-l="zh">放进 ~/Applications 并启动（brew 装完也会提示这一行）</span><span data-l="en">Put it in ~/Applications and start it (brew prints this line too)</span></p>
+              <div class="cmd cmd-wrap">
+                <span class="prompt" aria-hidden="true">$</span>
+                <code id="linkCmd">mkdir -p ~/Applications &amp;&amp; { [ ! -e ~/Applications/Sesame.app ] || [ -L ~/Applications/Sesame.app ] || mv ~/Applications/Sesame.app ~/Applications/Sesame.app.bak-$(date +%Y%m%d%H%M%S); } &amp;&amp; ln -sfn "$(brew --prefix)/opt/sesame/Sesame.app" ~/Applications/Sesame.app &amp;&amp; open ~/Applications/Sesame.app</code>
+                <button class="copy" type="button" data-copy="linkCmd" aria-label="Copy">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-copy"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-ok"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="copy-t"><span data-l="zh">复制</span><span data-l="en">Copy</span></span>
+                </button>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <div class="pane" role="tabpanel" id="pane-src" aria-labelledby="tab-src" hidden>
+          <p class="step-t"><span data-l="zh">需要 Node.js 22.18 以上和 Xcode 命令行工具（<code>xcode-select --install</code>）</span><span data-l="en">Needs Node.js 22.18+ and the Xcode Command Line Tools (<code>xcode-select --install</code>)</span></p>
+          <div class="cmd cmd-block">
+            <code id="srcCmd">git clone https://github.com/qiwei66/sesame.git
+cd sesame
+make install
+open ~/Applications/Sesame.app</code>
+            <button class="copy" type="button" data-copy="srcCmd" aria-label="Copy">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-copy"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="i-ok"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="copy-t"><span data-l="zh">复制</span><span data-l="en">Copy</span></span>
+            </button>
+          </div>
+          <p class="fine"><span data-l="zh"><code>make uninstall</code> 卸载，设置会保留。</span><span data-l="en"><code>make uninstall</code> removes it and keeps your settings.</span></p>
+        </div>
+        <div class="in-links">
+          <a class="btn btn-solid" href="https://github.com/qiwei66/sesame">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span data-l="zh">去 GitHub 看源码</span><span data-l="en">View on GitHub</span>
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/qiwei66/sesame/releases/latest"><span data-l="zh">更新日志</span><span data-l="en">Releases</span></a>
+          <a class="btn btn-ghost" href="https://github.com/qiwei66/sesame/blob/main/docs/advanced.md"><span data-l="zh">进阶用法</span><span data-l="en">Advanced</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img src="assets/sesame-icon.png" width="36" height="36" alt="">
+      <div>
+        <p class="foot-name">Sesame</p>
+        <p class="foot-tag"><span data-l="zh">别再翻会话了</span><span data-l="en">Stop digging through chats</span></p>
+      </div>
+    </div>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="https://github.com/qiwei66/sesame">GitHub</a>
+      <a href="https://github.com/qiwei66/sesame/blob/main/LICENSE"><span data-l="zh">MIT 许可证</span><span data-l="en">MIT License</span></a>
+      <a href="https://github.com/qiwei66/sesame/issues"><span data-l="zh">反馈问题</span><span data-l="en">Issues</span></a>
+    </nav>
+    <p class="foot-fine"><span data-l="zh">本页不收集任何数据：没有统计，没有追踪，也不加载外部字体。</span><span data-l="en">No tracking on this page: no analytics, no cookies, no external fonts.</span></p>
+  </div>
+</footer>
+
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+<script src="app.js"></script>
+</body>
+</html>

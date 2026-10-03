@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/index-local%20only-2ea44f.svg" alt="Index stays on your Mac">
 </p>
 
-<p align="center"><a href="README_zh.md">中文</a></p>
+<p align="center"><a href="https://qiwei66.github.io/sesame/"><b>Website</b></a> · <a href="README_zh.md">中文</a></p>
 
 <p align="center">
   <picture>
