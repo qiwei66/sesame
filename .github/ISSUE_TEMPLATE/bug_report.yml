@@ -1,0 +1,51 @@
+name: Bug report / 问题反馈
+description: Something does not work as expected. / 有地方不对劲。
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please remove anything private (paths, links, chat text) before posting.
+        感谢反馈！发帖前请删掉路径、链接、对话内容等隐私信息。
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened? / 发生了什么
+      description: What you did, what you expected, what you saw. / 你做了什么、预期是什么、实际看到什么。
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version / macOS 版本
+      placeholder: "e.g. 15.5 (Apple → About This Mac)"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Install method / 安装方式
+      options:
+        - Homebrew (brew install qiwei66/tap/sesame)
+        - From source (make install)
+        - Other / 其他
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Sesame version / 版本
+      placeholder: "e.g. 0.1.0 (menu bar → About)"
+  - type: textarea
+    id: doctor
+    attributes:
+      label: "`va doctor` output / `va doctor` 输出"
+      description: Run `va doctor` in Terminal and paste the full output. / 在终端运行 `va doctor`，贴完整输出。
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or logs / 截图或日志
+      description: Optional. / 可选。
