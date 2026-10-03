@@ -1,7 +1,7 @@
 import Foundation
 import SesameCore
 
-/// Log file: ~/Library/Logs/Sesame/sesame.log (and stderr). Never contains keys: the app never sees them.
+/// Log file: ~/Library/Logs/Sesame/sesame.log, or sesame-test.log in SESAME_TEST_HOOKS builds (and stderr). Never contains keys: the app never sees them.
 enum Log {
     static let url: URL = {
         var dir = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Logs/Sesame", isDirectory: true)
@@ -9,7 +9,11 @@ enum Log {
         if let d = ProcessInfo.processInfo.environment["SESAME_LOG_DIR"], !d.isEmpty { dir = URL(fileURLWithPath: d, isDirectory: true) }
         #endif
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent("sesame.log")
+        #if SESAME_TEST_HOOKS
+        return dir.appendingPathComponent(LogFileName.name(testHooks: true))
+        #else
+        return dir.appendingPathComponent(LogFileName.name(testHooks: false))
+        #endif
     }()
     private static let q = DispatchQueue(label: "sesame.log")
     private static let fmt: ISO8601DateFormatter = { let f = ISO8601DateFormatter(); f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]; return f }()

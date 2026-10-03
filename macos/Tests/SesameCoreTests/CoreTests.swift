@@ -120,3 +120,11 @@ final class ResultMapperTests: XCTestCase {
         XCTAssertFalse(mirror.children.contains { ($0.label ?? "").lowercased().contains("cost") || ($0.label ?? "").lowercased().contains("token") })
     }
 }
+
+final class LogFileNameTests: XCTestCase {
+    func testTestHookBuildsWriteTheirOwnLogFile() {
+        XCTAssertEqual(LogFileName.name(testHooks: false), "sesame.log")
+        XCTAssertEqual(LogFileName.name(testHooks: true), "sesame-test.log")
+        XCTAssertNotEqual(LogFileName.test, LogFileName.release)
+    }
+}
