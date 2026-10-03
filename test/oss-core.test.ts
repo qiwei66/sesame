@@ -1,12 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { PassThrough } from 'node:stream';
 import { parseYaml } from '../src/yaml.ts';
 import { defaultConfig, parseConfig, setConfig, loadConfig, resolvePaths } from '../src/config.ts';
-import { collectChecks, formatCheck } from '../src/doctor.ts';
+import { collectChecks, formatCheck, runDoctor } from '../src/doctor.ts';
 import { normalize } from '../src/normalize.ts';
 import { detectLocale, withLocale } from '../src/i18n.ts';
 import { searchSaved, obviousWinner, queryCore, memoryStore } from '../src/saved.ts';
@@ -395,6 +395,51 @@ test('parseConfig：locale 强制 en 时中文输入也走英文语言包', () =
 });
 
 // ── doctor：目录与语言 ──
+
+for (const [level, icon, code] of [['ok', '✅', 32], ['warn', '⚠️ ', 33], ['fail', '❌', 31]] as const) {
+  test(`doctor：${level} 只给状态行着色，修法保持默认颜色`, () => {
+    const check = { name: 'Example check', level, detail: 'Example detail', fix: 'Example fix' };
+    const line = `${icon} Example check: Example detail`;
+    const fix = level === 'ok' ? '' : '\n     fix: Example fix';
+    assert.equal(withLocale('en', () => formatCheck(check, true)), `\x1b[${code}m${line}\x1b[0m${fix}`);
+    assert.equal(withLocale('en', () => formatCheck(check, false)), `${line}${fix}`);
+  });
+}
+
+test('doctor：NO_COLOR 非空时禁用颜色，空值不禁用，非彩色输出始终无转义码', async (t) => {
+  const root = tmp();
+  const previous = { NO_COLOR: process.env.NO_COLOR, VA_CONFIG_DIR: process.env.VA_CONFIG_DIR };
+  t.after(() => {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+    rmSync(root, { recursive: true, force: true });
+  });
+  process.env.VA_CONFIG_DIR = root;
+  writeFileSync(join(root, 'config.yaml'), 'provider: ollama\n');
+  mkdirSync(join(root, 'logs'));
+  writeFileSync(join(root, 'logs/2026-10-01.jsonl'), `${JSON.stringify({ ts: '2026-10-01T11:00:00Z', error: 'Example error' })}\n`);
+  const run = async (): Promise<RunOutput> => ({ code: 1, stdout: '', stderr: '' });
+  for (const noColor of [undefined, '', '1', '0']) {
+    if (noColor === undefined) delete process.env.NO_COLOR;
+    else process.env.NO_COLOR = noColor;
+    for (const color of [true, false]) {
+      const lines: string[] = [];
+      const exitCode = await withLocale('en', () => runDoctor({
+        root, home: root, run, profile: 'sesame', now: () => new Date('2026-10-01T12:00:00Z'),
+        color, print: (line) => lines.push(line),
+      }));
+      assert.equal(exitCode, 1, 'missing index remains a failed check');
+      const output = lines.join('\n');
+      if (color && !noColor) {
+        for (const code of [31, 32, 33]) assert.ok(output.includes(`\x1b[${code}m`));
+      } else {
+        assert.ok(!output.includes('\x1b'), `color=${color}, NO_COLOR=${String(noColor)}`);
+      }
+    }
+  }
+});
 
 test('resolvePaths：env VA_INDEX_DIR / VA_LOG_DIR > config index_dir / log_dir > data_dir > 仓库目录', () => {
   const c = defaultConfig('/x');

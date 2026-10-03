@@ -34,11 +34,11 @@ export type Level = 'ok' | 'warn' | 'fail';
 export interface Check { name: string; level: Level; detail: string; fix?: string }
 
 const ICON: Record<Level, string> = { ok: '✅', warn: '⚠️ ', fail: '❌' };
+const COLOR: Record<Level, number> = { ok: 32, warn: 33, fail: 31 };
 
 export function formatCheck(c: Check, color: boolean): string {
-  const red = (s: string) => (color ? `\x1b[31m${s}\x1b[0m` : s);
   const line = `${ICON[c.level]} ${c.name}${tr('：', ': ')}${c.detail}`;
-  const out = c.level === 'fail' ? red(line) : line;
+  const out = color ? `\x1b[${COLOR[c.level]}m${line}\x1b[0m` : line;
   return c.level === 'ok' || !c.fix ? out : tr(`${out}\n     修法：${c.fix}`, `${out}\n     fix: ${c.fix}`);
 }
 
@@ -286,7 +286,7 @@ export async function alfredSelftest(root: string, run: Runner, waitMs = 8000): 
 
 export async function runDoctor(env: DoctorEnv): Promise<number> {
   const print = env.print ?? ((s: string) => process.stdout.write(`${s}\n`));
-  const color = env.color ?? Boolean(process.stdout.isTTY);
+  const color = (env.color ?? Boolean(process.stdout.isTTY)) && !process.env.NO_COLOR;
   print(tr('va doctor（只读体检）', 'va doctor (read-only health check)'));
   const checks = await collectChecks(env);
   for (const c of checks) print(formatCheck(c, color));
