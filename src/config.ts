@@ -82,10 +82,12 @@ export const INSTALL_MARKER = '.sesame-install';
  * Default data dir when config has no data_dir:
  *  - an installed core (`make install`, marker file present): ~/Library/Application Support/Sesame on macOS,
  *    $XDG_DATA_HOME/sesame (or ~/.local/share/sesame/data) elsewhere — reinstalling the core (rsync --delete) never wipes the index
+ *  - env VA_INSTALLED=1 counts as installed too: the Claude Code plugin runs the core from its plugin cache and must
+ *    share the app's index (and never keep data in a cache dir that is replaced on every plugin update)
  *  - a git checkout: the repo root (unchanged behavior for developers)
  */
 export function defaultDataDir(appRoot: string, env: NodeJS.ProcessEnv = process.env, home: string = homedir(), platform: string = process.platform): string {
-  if (!existsSync(join(appRoot, INSTALL_MARKER))) return appRoot;
+  if (env.VA_INSTALLED !== '1' && !existsSync(join(appRoot, INSTALL_MARKER))) return appRoot;
   if (platform === 'darwin') return join(home, 'Library/Application Support/Sesame');
   return env.XDG_DATA_HOME ? join(env.XDG_DATA_HOME, 'sesame') : join(home, '.local/share/sesame/data');
 }

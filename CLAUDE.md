@@ -26,6 +26,7 @@ Sesame.app (Swift, macos/)                 TS core (Node 22.18+, src/, no build 
 | Tools the model may call | `skills/builtin/*.ts`, `src/tools.ts` | See [docs/skills.md](docs/skills.md). Allowlist only |
 | Health check | `src/doctor.ts` (`va doctor`) | Read-only |
 | Config | `src/config.ts`, [docs/config.md](docs/config.md) | User config lives in `~/.config/voice-agent/`, never in the repo |
+| MCP server / Claude Code plugin | `src/mcp.ts` (`va mcp`), `plugin/`, `.claude-plugin/marketplace.json`, [docs/mcp.md](docs/mcp.md) | stdio MCP on the official SDK: `search_artifacts` / `open_artifact` / `artifact_stats`, reusing `saved.ts` search, `openItem` and `IndexService`. `plugin/core/*` are links to `bin`, `src`, `skills` (dereferenced into the plugin cache); `plugin/package.json` + lock hold only runtime packages. The plugin sets `VA_INSTALLED=1` to share the app's index. Installed cores get runtime packages from `npm ci --omit=dev` (Makefile, Homebrew formula) |
 
 ## Build and test
 
@@ -37,6 +38,16 @@ VA_DRY_RUN=1 bin/va "open the trading dashboard"   # plan only, nothing runs
 ```
 
 `src/**` changes take effect directly (Node strips types). TypeScript is strict with `noUnusedLocals` and `noUnusedParameters`.
+
+## Contributor notes
+
+- **`claude -p` tests run with a tool allowlist, in an empty temp HOME.** Pass `--tools "<only the tools under test>"`
+  (or `--disallowedTools` for every other tool), set `HOME=$(mktemp -d)` and point `VA_INDEX_DIR` at a fixture index.
+  `--allowedTools` only skips the prompt, it does not restrict: in one MCP test the model skipped Sesame, read a
+  private local file with built-in tools and published it as a web page.
+- Plugin changes: `claude plugin validate .`; install tests use an isolated `CLAUDE_CONFIG_DIR=$(mktemp -d)`, never
+  your own Claude settings.
+- One version everywhere (package.json, `plugin/`, `macos/VERSION`); `test/mcp.test.ts` checks it.
 
 ## Invariants (do not break these)
 

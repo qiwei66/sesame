@@ -125,11 +125,38 @@ open ~/Applications/Sesame.app
 
 `make uninstall` 卸载，设置会保留。热键默认 ⌥⇧Space，可在「设置 → 热键」里换成 ⌘Space。
 
+## 在 Claude Code 里用
+
+Sesame 也能作为插件跑在 Claude Code 里。在任何会话里直接说要找什么，Claude 会去你的产物库里查，再在你的 Mac 上打开。
+App 装不装都行：没装时插件自己从 Claude Code 和 Codex 的历史里建同样的本地索引；装了就和 App 共用一份索引。
+
+```bash
+claude plugin marketplace add qiwei66/sesame && claude plugin install sesame@sesame
+```
+
+也可以在会话里先输入 `/plugin marketplace add qiwei66/sesame`，再输入 `/plugin install sesame@sesame`。
+需要 Node.js 22.18+ 和 npm（Claude Code 用 npm 安装插件依赖）。
+
+> **你：** 上周那个看板在哪
+>
+> **Claude：** *（search_artifacts → open_artifact）* 找到了：**Trading Dashboard**，本机服务 `http://127.0.0.1:8787`，
+> 上周末（09-27）最后用过，已经在浏览器里打开。
+
+> **你：** 把我昨天做的报告打开
+>
+> **Claude：** *（search_artifacts → open_artifact）* 找到了你昨天的报告 **Q3 sales report**（Markdown 文件），已为你打开。
+
+已经用 Homebrew 或 `make install` 装好 App 的，自带的 `va` 也能直接当 MCP 服务用：`claude mcp add sesame -- va mcp`。
+
+一共三个工具：`search_artifacts`（每条结果带标题、类型、地址、时间和来源会话）、`open_artifact`、`artifact_stats`。
+其它 MCP 客户端用 `va mcp` 跑同一个服务，见 [docs/mcp.md](docs/mcp.md)。
+
 ## 隐私
 
 - 索引只存在你的 Mac 上（`~/Library/Application Support/Sesame`），不会上传。
 - Sesame 只读 `~/.claude/projects` 和 `~/.codex/sessions`，从不往里写。
 - 模型可配可不配。配了的话，发出去的只有你说的那句话、已装 App 的名字，以及本地拿不准时各候选的类型、标题和几个关键词；完整链接、文件路径、剪贴板都不发。
+- 在 Claude Code 里用时，你问到的那几条结果（标题、类型、地址、时间）会交给这个会话正在用的模型，也就是你本来就在对话的那个模型，不发给别处。
 
 ## 更多
 

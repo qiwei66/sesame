@@ -41,7 +41,8 @@ function label(it: SavedItem): string {
   return `${displayTitle(it)}（${KIND_CN[it.kind] ?? it.kind}）`;
 }
 
-async function openItem(it: SavedItem, ctx: ExecContext, how: string, usage?: Usage): Promise<ToolResult> {
+/** Open one indexed item on this Mac (also used by `va mcp` open_artifact) */
+export async function openItem(it: SavedItem, ctx: ExecContext, how: string, usage?: Usage): Promise<ToolResult> {
   const target = it.url;
   const auth = it.needsAuth ? tr('（原链接带鉴权参数，已去掉，可能需要重新登录）', ' (auth parameters were stripped; you may need to sign in again)') : '';
   if (ctx.dryRun) {

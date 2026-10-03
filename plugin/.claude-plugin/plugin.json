@@ -1,0 +1,31 @@
+{
+  "name": "sesame",
+  "displayName": "Sesame",
+  "version": "0.2.0",
+  "description": "Find anything Claude Code and Codex made for you: search and open past dashboards, reports, decks, sites, PRs and files from a local index",
+  "author": {
+    "name": "qiwei66",
+    "url": "https://github.com/qiwei66"
+  },
+  "homepage": "https://github.com/qiwei66/sesame",
+  "repository": "https://github.com/qiwei66/sesame",
+  "license": "MIT",
+  "keywords": [
+    "search",
+    "artifacts",
+    "history",
+    "mcp",
+    "macos"
+  ],
+  "mcpServers": {
+    "sesame": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/core/bin/va",
+      "args": [
+        "mcp"
+      ],
+      "env": {
+        "VA_INSTALLED": "1"
+      }
+    }
+  }
+}
