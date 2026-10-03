@@ -565,7 +565,7 @@ kbd.down { background: var(--sel); box-shadow: inset 0 1px 1.5px rgba(0,0,0,.18)
     <div class="mi"><svg class="i"><use href="#i-sparkle"/></svg><span class="lbl">Q3 复盘图表</span><span class="r">昨天</span></div>
     <div class="mi"><svg class="i"><use href="#i-file-text"/></svg><span class="lbl">供应商比价表.md</span><span class="r">周一</span></div>
     <div class="sepline"></div>
-    <div class="stat"><svg class="i"><use href="#i-folder-simple"/></svg><span>索引 2,708 条</span><span class="r muted">2 分钟前更新</span></div>
+    <div class="stat"><svg class="i"><use href="#i-folder-simple"/></svg><span>索引 313 条</span><span class="r muted">2 分钟前更新</span></div>
     <div class="sepline"></div>
     <div class="mi"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">设置…</span><span class="short">⌘ ,</span></div>
     <div class="mi"><svg class="i"><use href="#i-power"/></svg><span class="lbl">退出 Sesame</span><span class="short">⌘ Q</span></div>
@@ -588,7 +588,7 @@ kbd.down { background: var(--sel); box-shadow: inset 0 1px 1.5px rgba(0,0,0,.18)
 
   <figure class="sharecard" id="shareCard" aria-label="分享卡预览（导出图 1200×675 的一半大小）">
     <div class="logo" id="shareLogo"></div>
-    <div class="h">我的 <b>2,708</b> 个 AI 产物，<br>动动嘴就调出来。</div>
+    <div class="h">我的 <b>313</b> 个 AI 产物，<br>动动嘴就调出来。</div>
     <div class="g" id="shareGroups"></div>
     <div class="f"><b>Sesame</b><span class="u">sesame.example  ·  github.com/qiwei66/sesame</span></div>
   </figure>
@@ -634,7 +634,7 @@ kbd.down { background: var(--sel); box-shadow: inset 0 1px 1.5px rgba(0,0,0,.18)
   // share card preview: icon + the non-empty groups (only counts: no titles, paths or names)
   setTimeout(() => {
     document.getElementById('shareLogo').innerHTML = markSvg();
-    document.getElementById('shareGroups').innerHTML = [['chart-line-up', '看板', '186'], ['file-text', '报告', '412'], ['presentation-chart', 'PPT', '37'], ['globe-simple', '网站', '64'], ['git-pull-request', 'PR', '1,293'], ['file', '文件', '716']]
+    document.getElementById('shareGroups').innerHTML = [['chart-line-up', '看板', '10'], ['file-text', '报告', '150'], ['globe-simple', '网站', '38'], ['git-pull-request', 'PR', '88'], ['file', '文件', '27']]
       .map(([i, k, c]) => `<span>${ic(i)}${k}<b>${c}</b></span>`).join('');
   }, 0);
   const liveRow = (fav, icon, title, sub, k, sel = false) =>
@@ -668,15 +668,14 @@ kbd.down { background: var(--sel); box-shadow: inset 0 1px 1.5px rgba(0,0,0,.18)
     4: { q: '', ph: ph(BACKUP), key: BACKUP, intro: true, body: `
       <div class="intro">
         <div class="headline">动动嘴，就调出来。</div>
-        <div class="count"><span class="n" data-count="2708">2,708</span> 个 AI 产物，一句话的事。</div>
+        <div class="count"><span class="n" data-count="313">313</span> 个 AI 产物，一句话的事。</div>
         <div class="srcrow"><span class="src">来自你和 Claude Code、Codex 的全部对话</span><button class="share" id="shareBtn">${ic('arrow-up')}<span>分享</span></button></div>
         <div class="cats">
-          <div class="cat">${ic('chart-line-up')}<span class="k">看板</span><span class="c" data-count="186">186</span></div>
-          <div class="cat">${ic('file-text')}<span class="k">报告</span><span class="c" data-count="412">412</span></div>
-          <div class="cat">${ic('presentation-chart')}<span class="k">PPT</span><span class="c" data-count="37">37</span></div>
-          <div class="cat">${ic('globe-simple')}<span class="k">网站</span><span class="c" data-count="64">64</span></div>
-          <div class="cat">${ic('git-pull-request')}<span class="k">PR</span><span class="c" data-count="1293">1,293</span></div>
-          <div class="cat">${ic('file')}<span class="k">文件</span><span class="c" data-count="716">716</span></div>
+          <div class="cat">${ic('chart-line-up')}<span class="k">看板</span><span class="c" data-count="10">10</span></div>
+          <div class="cat">${ic('file-text')}<span class="k">报告</span><span class="c" data-count="150">150</span></div>
+          <div class="cat">${ic('globe-simple')}<span class="k">网站</span><span class="c" data-count="38">38</span></div>
+          <div class="cat">${ic('git-pull-request')}<span class="k">PR</span><span class="c" data-count="88">88</span></div>
+          <div class="cat">${ic('file')}<span class="k">文件</span><span class="c" data-count="27">27</span></div>
         </div>
         <div class="try"><span class="lbl">试试</span><span class="t">打开上周那个交易大盘</span><kbd>${ic('arrow-elbow-down-left')}</kbd></div>
       </div>` },
@@ -760,7 +759,7 @@ kbd.down { background: var(--sel); box-shadow: inset 0 1px 1.5px rgba(0,0,0,.18)
       <div class="miss">
         <div class="msg">没找到“汇率换算表”</div>
         <dl class="steps">
-          <dt>已经做了</dt><dd>搜过 <b>2,708 条</b>记录、Chrome 最近 7 天历史和桌面文件，没有标题或内容对得上的。</dd>
+          <dt>已经做了</dt><dd>搜过 <b>313 条</b>记录、Chrome 最近 7 天历史和桌面文件，没有标题或内容对得上的。</dd>
           <dt>需要你</dt><dd class="ask">说一个页面里出现过的词，比如币种或金额；或者告诉我是在哪个项目里做的。</dd>
         </dl>
       </div>` },

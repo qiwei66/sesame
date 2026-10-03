@@ -18,7 +18,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-firstrun-en-dark.gif">
-    <img src="docs/assets/hero-firstrun-en-light.gif" width="960" alt="Sesame's first run: 'Just say it. It's there.' with a count of 2,708 AI creations rolling up from zero, split into dashboards, reports, decks, sites, PRs and files">
+    <img src="docs/assets/hero-firstrun-en-light.gif" width="960" alt="Sesame's first run: 'Just say it. It's there.' with a count of 313 AI creations rolling up from zero, split into dashboards, reports, sites, PRs and files">
   </picture>
 </p>
 
@@ -68,7 +68,7 @@ Sesame keeps a local library of every artifact your AI delivered, so a few words
     <td width="64%">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="docs/assets/firstrun-en-dark.gif">
-        <img src="docs/assets/firstrun-en-light.gif" width="560" alt="First run: 'Just say it. It's there.' and 2,708 AI creations counted up, split into dashboards, reports, decks, sites, PRs and files">
+        <img src="docs/assets/firstrun-en-light.gif" width="560" alt="First run: 'Just say it. It's there.' and 313 AI creations counted up, split into dashboards, reports, sites, PRs and files">
       </picture>
     </td>
   </tr>
@@ -98,7 +98,7 @@ Sesame keeps a local library of every artifact your AI delivered, so a few words
     <td width="64%">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="docs/assets/share-en-dark.png">
-        <img src="docs/assets/share-en-light.png" width="560" alt="Share card: 'My 2,708 AI creations, one sentence away.' with counts by type">
+        <img src="docs/assets/share-en-light.png" width="560" alt="Share card: 'My 313 AI creations, one sentence away.' with counts by type">
       </picture>
     </td>
   </tr>

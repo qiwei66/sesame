@@ -64,7 +64,7 @@ Prints `[demo] state=… window=<id>`; capture just that window with `screencapt
 States: 1 listening · 2 intent preview · 3 success · 5 info card · 6 candidates · 7 confirm · 8 English · 9 menu ·
 0 not found · 4 first run · h first run + hot key taken · t1 / t2 / t3 typing (4 rows / 1 row / nothing matched) ·
 v hold to talk · m microphone notice · s Settings (open at login). The first-run counts are the prototype's sample
-numbers (2,708 …), not the real index.
+numbers (313 in all …), not the real index.
 
 Demo mode starts no core process and registers no hot key.
 
