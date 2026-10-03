@@ -83,7 +83,7 @@
 "err.again" = "Say it again";
 "listening.release" = "Release to send";
 "intro.headline" = "Just say it. It's there.";
-"intro.count" = "%@ AI creations, one sentence away.";
+"intro.count" = "%@ AI creations. Say which one you need.";
 "intro.source" = "From all your conversations with Claude Code and Codex";
 "intro.share" = "Share";
 "intro.shared" = "Saved to Downloads, copied";

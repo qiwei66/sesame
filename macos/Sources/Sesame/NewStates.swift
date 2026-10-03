@@ -84,7 +84,7 @@ struct IntroView: View {
         .animation(.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.26), value: card.sample)
     }
 
-    /// "313 个 AI 产物，一句话的事。": the number in a heavier, larger cut of the same line
+    /// "313 个 AI 产物，想找哪个，说一句就行。": the number in a heavier, larger cut of the same line
     private var countLine: some View {
         let (a, b) = ShareCard.split(L10n.t("intro.count"))
         return (Text(a).font(.ui(17)).foregroundColor(Tok.text2)

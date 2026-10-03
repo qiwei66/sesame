@@ -83,7 +83,7 @@
 "err.again" = "再说一次试试";
 "listening.release" = "松开就发送";
 "intro.headline" = "动动嘴，就调出来。";
-"intro.count" = "%@ 个 AI 产物，一句话的事。";
+"intro.count" = "%@ 个 AI 产物，想找哪个，说一句就行。";
 "intro.source" = "来自你和 Claude Code、Codex 的全部对话";
 "intro.share" = "分享";
 "intro.shared" = "已存到下载并复制";
