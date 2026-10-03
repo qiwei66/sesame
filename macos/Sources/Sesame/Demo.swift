@@ -22,8 +22,8 @@ struct DemoOptions {
 
 @MainActor
 enum Demo {
-    /// the prototype's sample counts (design/prototype.html state 4)
-    static let demoGroups: [IntroGroupKind: Int] = [.dashboard: 186, .report: 412, .deck: 37, .site: 64, .pr: 1293, .file: 716]
+    /// the prototype's sample counts (design/prototype.html state 4): 313 in all; decks 0, so that group is hidden
+    static let demoGroups: [IntroGroupKind: Int] = [.dashboard: 10, .report: 150, .deck: 0, .site: 38, .pr: 88, .file: 27]
 
     static func phase(_ s: String) -> (String, PanelPhase)? {
         let zhQ = "打开上周让 Claude 做的那个交易大盘"
@@ -51,7 +51,7 @@ enum Demo {
         case "4", "4s", "h":
             let sample = Candidate(id: "demo", title: "上周那个交易大盘", address: "localhost:7341", url: nil, kind: .local)
             // 4s = right after Share: the button says the card was saved and copied
-            return ("", .intro(IntroCard(total: 2708, groups: demoGroups, sample: sample, hotKeyTaken: s == "h", shared: s == "4s")))
+            return ("", .intro(IntroCard(total: 313, groups: demoGroups, sample: sample, hotKeyTaken: s == "h", shared: s == "4s")))
         case "t1": return ("大", .live(LiveList(items: [
             Candidate(id: "a", title: "交易大盘", address: "localhost:7341", url: nil, kind: .local),
             Candidate(id: "b", title: "年度大事记", address: "claude.ai/artifact/2b91…c04", url: nil, kind: .artifact),
@@ -78,7 +78,7 @@ enum Demo {
         if let i = CommandLine.arguments.firstIndex(of: "--share-out"), i + 1 < CommandLine.arguments.count {
             let dark = CommandLine.arguments.contains("--dark")
             let url = URL(fileURLWithPath: CommandLine.arguments[i + 1])
-            if let d = ShareCardView.png(total: 2708, groups: demoGroups, dark: dark), (try? d.write(to: url)) != nil {
+            if let d = ShareCardView.png(total: 313, groups: demoGroups, dark: dark), (try? d.write(to: url)) != nil {
                 print("[demo] share card -> \(url.path) bytes=\(d.count)")
             } else { print("[demo] share card FAILED") }
             fflush(stdout)

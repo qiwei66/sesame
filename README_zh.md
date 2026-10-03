@@ -18,7 +18,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-firstrun-zh-dark.gif">
-    <img src="docs/assets/hero-firstrun-zh-light.gif" width="960" alt="第一次打开 Sesame：「动动嘴，就调出来。」下面是 2,708 个 AI 产物的计数从 0 滚上去，分成看板、报告、PPT、网站、PR 和文件">
+    <img src="docs/assets/hero-firstrun-zh-light.gif" width="960" alt="第一次打开 Sesame：「动动嘴，就调出来。」下面是 313 个 AI 产物的计数从 0 滚上去，分成看板、报告、网站、PR 和文件">
   </picture>
 </p>
 
@@ -68,7 +68,7 @@ Sesame 在本机把 AI 交付过的产物收成一个库，打几个字或说一
     <td width="64%">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="docs/assets/firstrun-zh-dark.gif">
-        <img src="docs/assets/firstrun-zh-light.gif" width="560" alt="首次打开：「动动嘴，就调出来。」2,708 个 AI 产物的计数滚上去，分成看板、报告、PPT、网站、PR 和文件">
+        <img src="docs/assets/firstrun-zh-light.gif" width="560" alt="首次打开：「动动嘴，就调出来。」313 个 AI 产物的计数滚上去，分成看板、报告、网站、PR 和文件">
       </picture>
     </td>
   </tr>
@@ -98,7 +98,7 @@ Sesame 在本机把 AI 交付过的产物收成一个库，打几个字或说一
     <td width="64%">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="docs/assets/share-zh-dark.png">
-        <img src="docs/assets/share-zh-light.png" width="560" alt="分享卡：「我的 2,708 个 AI 产物，动动嘴就调出来。」下面是按类型的计数">
+        <img src="docs/assets/share-zh-light.png" width="560" alt="分享卡：「我的 313 个 AI 产物，动动嘴就调出来。」下面是按类型的计数">
       </picture>
     </td>
   </tr>

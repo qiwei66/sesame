@@ -47,7 +47,7 @@ struct ShareCardView: View {
             Spacer(minLength: 0)
             HStack(spacing: 14) {
                 Text("Sesame").font(.system(size: 22, weight: .semibold)).foregroundColor(ink)
-                Text("\(ShareCard.site)  ·  \(ShareCard.repo)").font(.system(size: 20, design: .monospaced)).foregroundColor(ink3)
+                Text(ShareCard.repo).font(.system(size: 20, design: .monospaced)).foregroundColor(ink3)
             }
         }
         .padding(EdgeInsets(top: 72, leading: 88, bottom: 64, trailing: 88))
