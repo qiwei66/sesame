@@ -1,0 +1,22 @@
+name: Feature request / 功能建议
+description: An idea that would make Sesame more useful. / 让 Sesame 更好用的想法。
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem / 你遇到的问题
+      description: What were you trying to find or do? / 你当时想找什么、做什么？
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you'd like / 你希望怎样
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Workarounds you tried / 试过的替代办法
+      description: Optional. / 可选。

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation / 文档
+    url: https://github.com/qiwei66/sesame/tree/main/docs
+    about: Config, commands and advanced usage. / 配置、命令与进阶用法。

@@ -1,0 +1,34 @@
+name: New source request / 新增来源请求
+description: Index artifacts from another AI tool (e.g. Cursor, Windsurf). / 让 Sesame 索引另一个 AI 工具的产物（如 Cursor、Windsurf）。
+labels: ["source", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Sources live in `src/sources/` (one file per tool, see `claude.ts` and `codex.ts`).
+        来源代码在 `src/sources/`，一个工具一个文件，可参考 `claude.ts` 与 `codex.ts`。
+  - type: input
+    id: tool
+    attributes:
+      label: Tool / 工具
+      placeholder: "e.g. Cursor 1.x"
+    validations:
+      required: true
+  - type: textarea
+    id: location
+    attributes:
+      label: Where it stores history / 历史记录存在哪
+      description: Directory and file format (JSONL, SQLite, …), if you know. / 目录和文件格式（JSONL、SQLite 等），知道的话请写上。
+      placeholder: "~/Library/Application Support/<Tool>/…"
+  - type: textarea
+    id: sample
+    attributes:
+      label: Sample record / 样例记录
+      description: One redacted line or row that contains a link or file the AI delivered. Remove private content. / 一条含 AI 交付链接或文件的记录，请先脱敏。
+      render: text
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contributing / 参与
+      options:
+        - label: I can help implement or test this. / 我可以帮忙实现或测试。
