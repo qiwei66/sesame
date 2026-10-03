@@ -44,6 +44,7 @@
 | 模型 | `src/llm.ts` · `src/providers.ts` | OpenAI 兼容 `/chat/completions`；provider（deepseek/openai/ollama/lmstudio）与 key 来源（env/钥匙串/文件）在 `~/.config/voice-agent/config.yaml` |
 | 索引器 | `bin/va-index` → `src/index-cli.ts` · `src/index-run.ts` · `src/indexer.ts` | 从 Claude 对话抽 Artifact/链接/文档；字节偏移增量；脱敏 |
 | 检索 | `src/saved.ts` | bigram + 泛词降权 + 具体词兜底 + 同会话/同项目主题词 + 别名 |
+| MCP / Claude Code 插件 | `bin/va mcp` → `src/mcp.ts` · `plugin/`（`.claude-plugin/plugin.json`，`core/` 是指向 bin/src/skills 的链接）· `.claude-plugin/marketplace.json`（`source: ./plugin`） | stdio MCP 服务（官方 TypeScript SDK）：`search_artifacts` / `open_artifact` / `artifact_stats`，复用 saved.ts 检索、`openItem`、`IndexService`；插件带 `VA_INSTALLED=1`，和 App 共用 `~/Library/Application Support/Sesame` 的索引。安装版 core 由 `make install-core` / Homebrew 用 `npm ci --omit=dev` 带上运行时依赖。说明见 docs/mcp.md |
 | 自动回车 | `autoenter/main.swift` → `bin/VA AutoEnter.app`（bundle id `<prefix>.va-autoenter`，LSUIElement） | 只在 Alfred 浮窗在屏时、听写完成后按一次回车 |
 | Alfred | `scripts/build-alfred.ts` · `scripts/alfred-install.py` | 生成 workflow；文件法装入；fallback 第一位；主热键 ⌘Space |
 | 安装 | `bin/va-setup` · `bin/va-autoenter-setup` · `scripts/build-autoenter.sh` | 一键幂等安装；授权引导；固定身份签名 |
@@ -109,6 +110,12 @@ bin/va-setup                   # 任何一环坏了先跑它（幂等；最后�
 - 改 Alfred workflow：改 `scripts/build-alfred.ts` → `bin/va-setup`（会就地更新已装 workflow，目录 UUID 不变）。只想更新 workflow 不重编助手：`node --no-warnings scripts/build-alfred.ts && python3 scripts/alfred-install.py dist/build/info.plist`。
 - va 退出码约定（Alfred 脚本依赖）：0 正常；1 = va 已处理的失败（用户已看到对话框，Alfred 只记日志不重复弹）；3 = 未捕获异常；127 = 找不到 node。非 0、非 1 → 记 `logs/alfred-errors.log` + 弹通知。
 - 改 launchd：改 `launchd/*.plist` → `bin/va-setup`。
+
+## 贡献者须知
+
+- **`claude -p` 实测必须关掉其它工具、在空的临时 HOME 里跑**：带 `--tools "<只列要测的工具>"` 白名单（或 `--disallowedTools` 禁掉其余全部），并且 `HOME=$(mktemp -d)`、索引用假数据（`VA_INDEX_DIR` 指向夹具）。
+  - **理由（2026-10-03 事故）**：一次 MCP 实测只用了 `--allowedTools` 放行 Sesame 工具，模型没调 Sesame，反而用内置工具读了本机一份私人文件、写成网页并发布了出去。`--allowedTools` 只是免确认，不是限制；真实 HOME 里还有个人规则和数据。
+- 插件改动后跑 `claude plugin validate .`；安装实测用隔离的 `CLAUDE_CONFIG_DIR=$(mktemp -d)`，不碰自己的全局 Claude 配置。
 
 ## 权限模型
 

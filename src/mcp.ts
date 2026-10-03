@@ -67,8 +67,9 @@ function indexInfo(d: McpDeps): Record<string, unknown> {
 }
 
 /** Kick off an incremental index run when the index is missing or stale (non-blocking, child process) */
-export function refreshIfStale(d: McpDeps): boolean {
-  if (!d.indexer) return false;
+export function refreshIfStale(d: McpDeps, env: NodeJS.ProcessEnv = process.env): boolean {
+  // VA_NO_AUTO_INDEX=1: install self-checks (make install-core, brew test) only ask initialize, no index run
+  if (!d.indexer || env.VA_NO_AUTO_INDEX === '1') return false;
   const s = d.indexer.status();
   const now = (d.now ?? (() => new Date()))().getTime();
   if (s.running) return false;

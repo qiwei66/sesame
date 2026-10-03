@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { accessSync, constants, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { accessSync, constants, existsSync, mkdirSync, readlinkSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -79,6 +79,7 @@ test('va mcp over real stdio: initialize → tools/list → tools/call (search /
   const init = await s.request('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test', version: '0' } });
   assert.equal(init.error, undefined);
   assert.equal((init.result?.serverInfo as { name: string }).name, 'sesame');
+  assert.equal((init.result?.serverInfo as { version: string }).version, readFileSync(join(ROOT, 'macos/VERSION'), 'utf8').trim());
   assert.ok((init.result?.capabilities as Record<string, unknown>).tools, 'tools capability');
   assert.match(String(init.result?.instructions), /search_artifacts/);
   s.notify('notifications/initialized');
@@ -156,20 +157,34 @@ test('VA_INSTALLED=1 (the Claude Code plugin) keeps data in the per-user data di
   assert.equal(defaultDataDir(root, { VA_INSTALLED: '1', XDG_DATA_HOME: '/x' }, '/h', 'linux'), '/x/sesame');
 });
 
-test('plugin + marketplace manifests: same name, MCP server runs bin/va mcp from the plugin root', () => {
-  const plugin = JSON.parse(readFileSync(join(ROOT, '.claude-plugin/plugin.json'), 'utf8')) as { name: string; mcpServers: Record<string, { command: string; args: string[]; env?: Record<string, string> }> };
-  const market = JSON.parse(readFileSync(join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')) as { name: string; plugins: Array<{ name: string; source: string }> };
+test('plugin + marketplace manifests: same name, plugin/ holds only the core (links), MCP server runs core/bin/va mcp', () => {
+  const read = (f: string) => JSON.parse(readFileSync(join(ROOT, f), 'utf8'));
+  const plugin = read('plugin/.claude-plugin/plugin.json') as { name: string; version: string; mcpServers: Record<string, { command: string; args: string[]; env?: Record<string, string> }> };
+  const market = read('.claude-plugin/marketplace.json') as { name: string; plugins: Array<{ name: string; source: string }> };
   assert.equal(market.plugins[0].name, plugin.name, 'entry name = manifest name');
-  assert.equal(market.plugins[0].source, './', 'the repository is both the marketplace and the plugin');
+  assert.equal(market.plugins[0].source, './plugin');
   const srv = plugin.mcpServers.sesame;
-  assert.equal(srv.command, '${CLAUDE_PLUGIN_ROOT}/bin/va');
+  assert.equal(srv.command, '${CLAUDE_PLUGIN_ROOT}/core/bin/va');
   assert.deepEqual(srv.args, ['mcp']);
   assert.equal(srv.env?.VA_INSTALLED, '1');
-  accessSync(join(ROOT, 'bin/va'), constants.X_OK);
-  // Claude Code installs the plugin's node_modules from package.json + package-lock.json at the plugin root
-  const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as { dependencies: Record<string, string> };
-  const lock = JSON.parse(readFileSync(join(ROOT, 'package-lock.json'), 'utf8')) as { lockfileVersion: number; packages: Record<string, { dependencies?: Record<string, string> }> };
-  assert.ok(lock.lockfileVersion >= 2);
-  assert.deepEqual(lock.packages[''].dependencies, pkg.dependencies, 'lockfile lists the same dependencies');
-  for (const v of Object.values(pkg.dependencies)) assert.match(v, /^\d+\.\d+\.\d+$/, 'exact versions');
+  // no top-level bin/ in the plugin: it would land on the Bash tool's PATH
+  assert.equal(existsSync(join(ROOT, 'plugin/bin')), false);
+  // core/* are links into the repository: Claude Code copies their targets into the plugin cache
+  for (const [l, target] of [['bin', '../../bin'], ['src', '../../src'], ['skills', '../../skills'], ['package.json', '../../package.json'], ['LICENSE', '../../LICENSE']]) {
+    assert.equal(readlinkSync(join(ROOT, 'plugin/core', l)), target, `plugin/core/${l}`);
+  }
+  accessSync(join(ROOT, 'plugin/core/bin/va'), constants.X_OK);
+  // Claude Code installs node_modules from package.json + package-lock.json at the plugin root
+  const root = read('package.json') as { version: string; dependencies: Record<string, string> };
+  const pkg = read('plugin/package.json') as { version: string; dependencies: Record<string, string> };
+  assert.deepEqual(pkg.dependencies, root.dependencies, 'plugin packages = the core runtime packages');
+  for (const f of ['package-lock.json', 'plugin/package-lock.json']) {
+    const lock = read(f) as { lockfileVersion: number; packages: Record<string, { dependencies?: Record<string, string> }> };
+    assert.ok(lock.lockfileVersion >= 2, f);
+    assert.deepEqual(lock.packages[''].dependencies, root.dependencies, `${f} lists the same dependencies`);
+  }
+  for (const v of Object.values(root.dependencies)) assert.match(v, /^\d+\.\d+\.\d+$/, 'exact versions');
+  // one version everywhere: core, plugin, its packages, the app bundle (MCP serverInfo reads package.json)
+  const app = readFileSync(join(ROOT, 'macos/VERSION'), 'utf8').trim();
+  assert.deepEqual([root.version, pkg.version, plugin.version], [app, app, app]);
 });

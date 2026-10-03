@@ -146,6 +146,8 @@ claude plugin marketplace add qiwei66/sesame && claude plugin install sesame@ses
 >
 > **Claude：** *（search_artifacts → open_artifact）* 找到了你昨天的报告 **Q3 sales report**（Markdown 文件），已为你打开。
 
+已经用 Homebrew 或 `make install` 装好 App 的，自带的 `va` 也能直接当 MCP 服务用：`claude mcp add sesame -- va mcp`。
+
 一共三个工具：`search_artifacts`（每条结果带标题、类型、地址、时间和来源会话）、`open_artifact`、`artifact_stats`。
 其它 MCP 客户端用 `va mcp` 跑同一个服务，见 [docs/mcp.md](docs/mcp.md)。
 

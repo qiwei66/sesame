@@ -20,7 +20,11 @@ class Sesame < Formula
     system "bash", "macos/scripts/build-app.sh" # ad-hoc signed unless SESAME_SIGN_IDENTITY is set
     prefix.install "macos/build/Sesame.app"
 
-    libexec.install "bin", "src", "skills", "package.json", "LICENSE"
+    libexec.install "bin", "src", "skills", "package.json", "package-lock.json", "LICENSE"
+    # runtime packages (the MCP SDK for `va mcp`), exactly as pinned in package-lock.json; no install scripts run
+    cd libexec do
+      system "npm", "ci", "--omit=dev", "--ignore-scripts", "--no-audit", "--no-fund"
+    end
     # marks an installed core: the index lives in ~/Library/Application Support/Sesame, so upgrades keep it
     touch libexec/".sesame-install"
     # the app finds the core at $(brew --prefix)/bin/va on its own (CoreLocator), no corePath setting needed
@@ -40,6 +44,8 @@ class Sesame < Formula
   test do
     out = pipe_output("#{bin}/va serve --stdio", %Q({"jsonrpc":"2.0","id":1,"method":"ping"}\n))
     assert_match "\"rpcVersion\":1", out
+    init = %Q({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"brew","version":"0"}}}\n)
+    assert_match "\"serverInfo\"", pipe_output("env VA_NO_AUTO_INDEX=1 #{bin}/va mcp", init)
     assert_predicate prefix/"Sesame.app/Contents/MacOS/Sesame", :executable?
     system "codesign", "--verify", prefix/"Sesame.app"
   end

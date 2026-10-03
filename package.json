@@ -1,6 +1,6 @@
 {
   "name": "voice-agent",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "语音指令助手 v1：缓存层 + DeepSeek 工具调用层",

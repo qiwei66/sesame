@@ -6,16 +6,25 @@ TypeScript SDK (`@modelcontextprotocol/sdk`, MIT). stdout carries protocol messa
 
 ## Install
 
-**Claude Code plugin** (this repository is both the plugin and its marketplace, `.claude-plugin/`):
+**Claude Code plugin** (this repository is the marketplace, `.claude-plugin/marketplace.json`; the plugin is `plugin/`,
+whose `core/` links to `bin`, `src` and `skills` and is copied into the plugin cache with only the runtime packages):
 
 ```bash
 claude plugin marketplace add qiwei66/sesame && claude plugin install sesame@sesame
 ```
 
 Claude Code copies the plugin into its plugin cache and installs its npm packages there from `package-lock.json`.
-The server runs `${CLAUDE_PLUGIN_ROOT}/bin/va mcp` with `VA_INSTALLED=1`, so its data lives in the per-user data dir
+The server runs `${CLAUDE_PLUGIN_ROOT}/core/bin/va mcp` with `VA_INSTALLED=1`, so its data lives in the per-user data dir
 (`~/Library/Application Support/Sesame` on macOS), shared with the app and kept across plugin updates.
 Updates: `claude plugin update sesame@sesame`. Remove: `claude plugin uninstall sesame@sesame`.
+
+**The app's core** (Homebrew or `make install`; both install the runtime packages): `va` is on your PATH, so
+
+```bash
+claude mcp add sesame -- va mcp
+```
+
+An installed core already keeps its data in the per-user data dir, no `VA_INSTALLED` needed.
 
 **Any other MCP client**, from a git checkout:
 
@@ -26,7 +35,7 @@ claude mcp add --scope user -e VA_INSTALLED=1 --transport stdio sesame -- "$PWD/
 
 For another client, the server entry is `{"command": "/path/to/sesame/bin/va", "args": ["mcp"], "env": {"VA_INSTALLED": "1"}}`.
 Without `VA_INSTALLED=1` a checkout keeps its index in the checkout (developer default, see `src/config.ts`).
-A core installed by `make install` or Homebrew has no `node_modules`; `va mcp` then says which command to run.
+A core without `node_modules` (an older install) answers `va mcp` with the command to run.
 
 ## Tools
 

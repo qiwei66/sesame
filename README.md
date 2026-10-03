@@ -150,6 +150,9 @@ It needs Node.js 22.18+ with npm, which Claude Code uses to install the plugin's
 > **Claude:** *(search_artifacts → open_artifact)* Found yesterday's report, **Q3 sales report** (a Markdown file),
 > and opened it.
 
+Already installed the app with Homebrew or `make install`? Its `va` works as an MCP server too:
+`claude mcp add sesame -- va mcp`.
+
 Three tools: `search_artifacts` (title, type, link, time and source session of each match), `open_artifact` and
 `artifact_stats`. Any other MCP client can run the same server with `va mcp`; see [docs/mcp.md](docs/mcp.md).
 
