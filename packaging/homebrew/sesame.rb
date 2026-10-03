@@ -5,10 +5,9 @@
 class Sesame < Formula
   desc "Find anything Claude Code & Codex made for you — just say it"
   homepage "https://github.com/qiwei66/sesame"
-  url "https://codeload.github.com/qiwei66/sesame/tar.gz/refs/tags/v0.2.1"
-  sha256 "185529064aa0c1f45449da9f0b02eb2faf023a6c0cd5bd41b8bbc49a8dac05ea"
+  url "https://codeload.github.com/qiwei66/sesame/tar.gz/refs/tags/v0.2.2"
+  sha256 "643024fec447f14f07da5dd3a7a15334f247f7335e26e6ab561746998b0f265e"
   license "MIT"
-  revision 1 # adds the `sesame` command; drop at the next version bump
   head "https://github.com/qiwei66/sesame.git", branch: "main"
 
   # Swift comes from the Xcode Command Line Tools, which Homebrew already requires; full Xcode is not needed.
