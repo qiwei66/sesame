@@ -23,7 +23,7 @@
   }
 
   /* ---------- the film ---------- */
-  var FILM_V = '20261003';   // bump when site/media/promo-*.mp4 changes, so browsers and the Pages CDN fetch the new film
+  var FILM_V = '20261003b';   // bump when site/media/promo-*.mp4 changes, so browsers and the Pages CDN fetch the new film
   var video = document.getElementById('promo');
   var player = document.getElementById('player');
   var playBtn = document.getElementById('playBtn');
