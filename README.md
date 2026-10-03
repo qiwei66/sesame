@@ -22,7 +22,7 @@
   </picture>
 </p>
 
-<p align="center"><a href="https://github.com/qiwei66/sesame/releases/download/v0.2.1/sesame-promo-en.mp4">▶ Watch the full promo (44 s)</a></p>
+<p align="center"><a href="https://github.com/qiwei66/sesame/releases/download/v0.2.1/sesame-promo-en.mp4">▶ Watch the full promo (45 s)</a></p>
 
 Your AI builds dashboards, reports, decks, sites and pull requests. A week later they are buried in long chats.
 Sesame keeps a local library of every artifact your AI delivered, so a few words bring it back: the artifact itself, not the chat it came from.
