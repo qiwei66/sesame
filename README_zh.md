@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/index-local%20only-2ea44f.svg" alt="索引只存在本机">
 </p>
 
-<p align="center"><a href="README.md">English</a></p>
+<p align="center"><a href="https://qiwei66.github.io/sesame/zh/"><b>官网</b></a> · <a href="README.md">English</a></p>
 
 <p align="center">
   <picture>
