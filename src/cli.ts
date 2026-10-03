@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +19,7 @@ const USAGE = `usage:
   va "<sentence>"        handle one sentence (VA_DRY_RUN=1 print only · VA_JSON=1 JSON report · VA_SPEAK=1 speak)
   va doctor              read-only health check
   va serve --stdio       JSON-RPC 2.0 over stdin/stdout (NDJSON), see docs/rpc.md
+  va mcp                 MCP server over stdio (search_artifacts / open_artifact / artifact_stats), see docs/mcp.md
 `;
 
 const CFG = loadConfig();
@@ -39,6 +41,7 @@ async function main(): Promise<number> {
     });
     return 0;
   }
+  if (argv[0] === 'mcp' && argv.length === 1) return serveMcpCli();
   const input = argv.join(' ').trim();
   if (!input) {
     process.stderr.write(USAGE);
@@ -57,6 +60,27 @@ async function main(): Promise<number> {
 
   withLocale(detectLocale(input, rt.cfg.locale), () => printReport(input, rt.paths.logDir, report, print));
   return report.layer === 'error' ? 1 : 0;
+}
+
+async function serveMcpCli(): Promise<number> {
+  // loaded only here: the other commands keep working in a core installed without node_modules
+  let mod: typeof import('./mcp.ts');
+  try {
+    mod = await import('./mcp.ts');
+  } catch (e) {
+    process.stderr.write(`[va] the MCP server needs its packages: run \`npm ci --omit=dev\` in ${ROOT} (${(e as Error).message.split('\n')[0]})\n`);
+    return 1;
+  }
+  const { version } = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as { version: string };
+  const diag = (l: string) => process.stderr.write(`${l}\n`);
+  let rt: ReturnType<typeof createRuntime> | null = null;
+  await mod.serveMcp({
+    version,
+    // one runtime for the session; VA_DRY_RUN=1 = open_artifact only says what it would open
+    runtime: () => (rt ??= createRuntime({ root: ROOT, home: HOME, print: diag, diag })),
+    indexer: new IndexService({ root: ROOT, indexDir: PATHS.indexDir }),
+  });
+  return 0;
 }
 
 function printReport(_input: string, logDir: string, report: RunReport, print: (l: string) => void): void {

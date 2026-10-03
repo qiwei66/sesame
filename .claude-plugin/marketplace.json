@@ -1,0 +1,13 @@
+{
+  "name": "sesame",
+  "description": "Sesame: a local library of everything your AI delivered, searchable from Claude Code",
+  "owner": { "name": "qiwei66", "url": "https://github.com/qiwei66" },
+  "plugins": [
+    {
+      "name": "sesame",
+      "source": "./",
+      "description": "Search and open past dashboards, reports, decks, sites, PRs and files that Claude Code and Codex delivered on this Mac",
+      "category": "productivity"
+    }
+  ]
+}

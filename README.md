@@ -127,12 +127,40 @@ open ~/Applications/Sesame.app
 
 `make uninstall` removes it and keeps your settings. The hot key is ⌥⇧Space; switch to ⌘Space in Settings › Hot key.
 
+## Use it in Claude Code
+
+Sesame also runs inside Claude Code as a plugin. Ask in plain words in any session and Claude looks it up in your
+library, then opens it on your Mac. The app is optional: without it, the plugin builds the same local index from
+your Claude Code and Codex history; with it, both share one index.
+
+```bash
+claude plugin marketplace add qiwei66/sesame && claude plugin install sesame@sesame
+```
+
+Inside a session, `/plugin marketplace add qiwei66/sesame` and then `/plugin install sesame@sesame` do the same.
+It needs Node.js 22.18+ with npm, which Claude Code uses to install the plugin's packages.
+
+> **You:** Where is the trading dashboard from last week?
+>
+> **Claude:** *(search_artifacts → open_artifact)* Found it: your **Trading Dashboard** is a local web service at
+> http://127.0.0.1:8787, last seen on September 27. It's opening in your browser now.
+
+> **You:** Open the report I made yesterday
+>
+> **Claude:** *(search_artifacts → open_artifact)* Found yesterday's report, **Q3 sales report** (a Markdown file),
+> and opened it.
+
+Three tools: `search_artifacts` (title, type, link, time and source session of each match), `open_artifact` and
+`artifact_stats`. Any other MCP client can run the same server with `va mcp`; see [docs/mcp.md](docs/mcp.md).
+
 ## Privacy
 
 - The index stays on your Mac (`~/Library/Application Support/Sesame`) and is never uploaded.
 - Sesame only reads `~/.claude/projects` and `~/.codex/sessions`, and never writes to them.
 - A model is optional. If you set one up, it gets your sentence, your app names and, when local search can't
   decide, each candidate's type, title and a few keywords. Never full links, file paths or your clipboard.
+- In Claude Code, the matches you ask about (title, type, link, time) go to the model of that conversation, the same
+  one you are already talking to. Nothing goes anywhere else.
 
 ## More
 
