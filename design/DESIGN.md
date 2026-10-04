@@ -154,7 +154,7 @@ Sesame（芝麻开门）是一个常驻菜单栏的 macOS 小工具。按热键�
 | 左上芝麻图标 | 看图的人第一眼知道是哪个产品；用 App 图标原图，不另画 |
 | 「我的 N 个 AI 产物，动动嘴就调出来。」 | 发图的人在替自己说话，所以是第一人称；文案在 `share.headline`，`%@` 是数字 |
 | 分组计数 | 证明数字是真的产物，不是聊天条数；为 0 的组不显示，免得出现「PPT 0」 |
-| 「Sesame　qiwei66.github.io/sesame · github.com/qiwei66/sesame」 | 看到图想要的人能找到：先放官网（不用懂 GitHub 也看得明白），再放仓库地址。两个常量在 `ShareCard.site` / `ShareCard.repo`，拼好的一行是 `ShareCard.footer` |
+| 「Sesame　brew install qiwei66/tap/sesame · github.com/qiwei66/sesame」 | 看到图想要的人能直接装：先放安装命令（照着敲一行就行），再放仓库地址。常量在 `ShareCard.install` / `ShareCard.repo`，拼好的一行是 `ShareCard.footer`；官网地址仍留在 `ShareCard.site` |
 
 删掉的：示例标题（「试试：打开上周那个交易大盘」那一行会暴露真实产物名）、用户名、日期、二维码。
 

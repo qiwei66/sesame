@@ -3,7 +3,7 @@ import SwiftUI
 import SesameCore
 
 /// The "share my number" image (DESIGN.md「分享我的数字」): 1200 × 675, the app icon, one first-person sentence with
-/// the number, the non-empty group counts, and the project addresses. Nothing else: no titles, paths or names.
+/// the number, the non-empty group counts, and the install command + repository. Nothing else: no titles, paths or names.
 /// Colors are fixed per theme (the image is rendered off screen, there is no window appearance to follow).
 struct ShareCardView: View {
     var total: Int

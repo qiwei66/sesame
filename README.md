@@ -33,12 +33,14 @@ sesame
   </picture>
 </p>
 
-<p align="center"><a href="https://github.com/qiwei66/sesame/releases/download/v0.2.1/sesame-promo-en.mp4">▶ Watch the full promo (45 s)</a></p>
+<p align="center"><a href="https://github.com/qiwei66/sesame/releases/latest/download/sesame-promo-en.mp4">▶ Watch the full promo (45 s)</a></p>
 
 <p align="center">Before: scroll through 20 chats to find yesterday's dashboard. Now: say "yesterday's dashboard".</p>
 
 Your AI builds dashboards, reports, decks, sites and pull requests. A week later they are buried in long chats.
 Sesame keeps a local library of every artifact your AI delivered, so a few words bring it back: the artifact itself, not the chat it came from.
+
+Session viewers show you the conversation. Sesame opens what the conversation produced.
 
 ## What it does
 
@@ -127,7 +129,8 @@ sesame
 
 `sesame` puts Sesame.app in `~/Applications` and starts it; run it again any time (an older copy from `make install` is kept as
 `Sesame.app.bak-<time>`). Homebrew brings Node.js, builds the app from source on your Mac and ad-hoc signs it: no Gatekeeper warning, no Apple
-Developer account needed.
+Developer account needed. The first install compiles the app and takes a few minutes; it needs the Xcode Command Line Tools
+(`xcode-select --install`), which Homebrew itself already requires.
 
 Or install from source (Node.js 22.18+ and the Xcode Command Line Tools, `xcode-select --install`):
 

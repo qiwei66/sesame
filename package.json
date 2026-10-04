@@ -3,7 +3,7 @@
   "version": "0.2.2",
   "private": true,
   "type": "module",
-  "description": "语音指令助手 v1：缓存层 + DeepSeek 工具调用层",
+  "description": "Sesame core: a local library of the dashboards, reports, sites, PRs and files Claude Code and Codex delivered; search, open and an MCP server (va)",
   "engines": {
     "node": ">=22.18"
   },
