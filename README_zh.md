@@ -6,6 +6,17 @@
 
 <p align="center"><b>别再翻会话了。</b><br>你的 AI 产物库：说一句话，就能找回 Claude Code、Codex 交付过的任何产物。</p>
 
+<div align="center">
+
+<sub>两行命令装好（macOS 13+）：</sub>
+
+```bash
+brew install qiwei66/tap/sesame
+sesame
+```
+
+</div>
+
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT 许可证"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black.svg" alt="macOS 13+">
@@ -23,6 +34,8 @@
 </p>
 
 <p align="center"><a href="https://github.com/qiwei66/sesame/releases/download/v0.2.1/sesame-promo-zh.mp4">▶ 看完整宣传片（45 秒）</a></p>
+
+<p align="center">以前：翻 20 个会话找昨天那个看板。现在：说一句「昨天的看板」。</p>
 
 AI 帮你做了看板、报告、PPT、网站、PR，过一周就全埋在长长的会话里了。
 Sesame 在本机把 AI 交付过的产物收成一个库，打几个字或说一句话就能找回来，打开的是产物本身，不是当时那段对话。
@@ -161,6 +174,8 @@ claude plugin marketplace add qiwei66/sesame && claude plugin install sesame@ses
 ## 更多
 
 查磁盘、移到废纸篓这类系统动作，自定义命令、技能插件和模型配置，见 [docs/advanced.md](docs/advanced.md)。
+
+如果 Sesame 帮你省了一次翻找，点个 star 能让更多人看到它。
 
 ## 许可证
 
