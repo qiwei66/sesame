@@ -22,10 +22,12 @@
   </picture>
 </p>
 
-<p align="center"><a href="https://github.com/qiwei66/sesame/releases/download/v0.2.1/sesame-promo-zh.mp4">▶ 看完整宣传片（45 秒）</a></p>
+<p align="center"><a href="https://github.com/qiwei66/sesame/releases/latest/download/sesame-promo-zh.mp4">▶ 看完整宣传片（45 秒）</a></p>
 
 AI 帮你做了看板、报告、PPT、网站、PR，过一周就全埋在长长的会话里了。
 Sesame 在本机把 AI 交付过的产物收成一个库，打几个字或说一句话就能找回来，打开的是产物本身，不是当时那段对话。
+
+会话浏览器给你看的是当时的对话，Sesame 打开的是对话做出来的东西。
 
 ## 它能做什么
 
@@ -112,7 +114,7 @@ sesame
 ```
 <!-- tap 仓库是 github.com/qiwei66/homebrew-tap（formula 源文件在 packaging/homebrew/） -->
 
-`sesame` 把 Sesame.app 放进 `~/Applications` 并启动，随时可以再跑（之前 `make install` 装的旧副本会改名为 `Sesame.app.bak-<时间>` 留着）。Homebrew 会装好 Node.js，在你的 Mac 上从源码编译 App 并 ad-hoc 签名，不弹 Gatekeeper 警告，也不需要苹果开发者账号。
+`sesame` 把 Sesame.app 放进 `~/Applications` 并启动，随时可以再跑（之前 `make install` 装的旧副本会改名为 `Sesame.app.bak-<时间>` 留着）。Homebrew 会装好 Node.js，在你的 Mac 上从源码编译 App 并 ad-hoc 签名，不弹 Gatekeeper 警告，也不需要苹果开发者账号。首次安装要编译 App，需要几分钟，并依赖 Xcode 命令行工具（`xcode-select --install`，装 Homebrew 时本来就需要）。
 
 也可以从源码装（需要 Node.js 22.18 以上和 Xcode 命令行工具 `xcode-select --install`）：
 

@@ -1,0 +1,30 @@
+# Publish server.json to the official MCP Registry (registry.modelcontextprotocol.io).
+# Auth is GitHub OIDC: no secret, and workflows in this account's repositories may publish io.github.qiwei66/*.
+# Runs when a version tag is pushed; "Run workflow" publishes whatever version server.json carries on that ref.
+name: MCP Registry
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: One version everywhere
+        run: |
+          test "$(jq -r .version server.json)" = "$(jq -r .version package.json)"
+          echo "publishing $(jq -r .name server.json) $(jq -r .version server.json)"
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+      - name: Log in with GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+      - name: Publish
+        run: ./mcp-publisher publish
