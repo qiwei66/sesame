@@ -6,6 +6,17 @@
 
 <p align="center"><b>Stop digging through chats.</b><br>Your library of AI creations: say a sentence and get back anything Claude Code or Codex delivered.</p>
 
+<div align="center">
+
+<sub>Install in two lines (macOS 13+):</sub>
+
+```bash
+brew install qiwei66/tap/sesame
+sesame
+```
+
+</div>
+
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black.svg" alt="macOS 13+">
@@ -23,6 +34,8 @@
 </p>
 
 <p align="center"><a href="https://github.com/qiwei66/sesame/releases/download/v0.2.1/sesame-promo-en.mp4">▶ Watch the full promo (45 s)</a></p>
+
+<p align="center">Before: scroll through 20 chats to find yesterday's dashboard. Now: say "yesterday's dashboard".</p>
 
 Your AI builds dashboards, reports, decks, sites and pull requests. A week later they are buried in long chats.
 Sesame keeps a local library of every artifact your AI delivered, so a few words bring it back: the artifact itself, not the chat it came from.
@@ -168,6 +181,8 @@ Three tools: `search_artifacts` (title, type, link, time and source session of e
 ## More
 
 System actions (disk space, moving files to the Trash), custom commands, skills and model setup: [docs/advanced.md](docs/advanced.md).
+
+If Sesame saved you one search through old chats, a star helps other people find it.
 
 ## License
 
