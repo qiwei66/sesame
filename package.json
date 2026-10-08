@@ -1,6 +1,6 @@
 {
   "name": "voice-agent",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "type": "module",
   "description": "Sesame core: a local library of the dashboards, reports, sites, PRs and files Claude Code and Codex delivered; search, open and an MCP server (va)",

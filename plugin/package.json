@@ -1,6 +1,6 @@
 {
   "name": "sesame-claude-plugin",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "type": "module",
   "description": "Runtime packages for the Sesame Claude Code plugin (core/ links to the repository's bin, src and skills)",
