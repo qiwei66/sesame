@@ -1,7 +1,7 @@
 {
   "name": "sesame",
   "displayName": "Sesame",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Find anything Claude Code and Codex made for you: search and open past dashboards, reports, decks, sites, PRs and files from a local index",
   "author": {
     "name": "qiwei66",
