@@ -5,8 +5,8 @@
 class Sesame < Formula
   desc "Find anything Claude Code & Codex made for you — just say it"
   homepage "https://github.com/qiwei66/sesame"
-  url "https://codeload.github.com/qiwei66/sesame/tar.gz/refs/tags/v0.2.2"
-  sha256 "643024fec447f14f07da5dd3a7a15334f247f7335e26e6ab561746998b0f265e"
+  url "https://codeload.github.com/qiwei66/sesame/tar.gz/refs/tags/v0.2.3"
+  sha256 "ed0b7301aad83cec0306a50b8540502f72bf4101f5636c428e77bc4dad9696e5"
   license "MIT"
   head "https://github.com/qiwei66/sesame.git", branch: "main"
 
