@@ -21,6 +21,99 @@ export function formatCheck(c: Check, color: boolean): string {
   return c.level === 'ok' || !c.fix ? out : tr(`${out}\n     修法：${c.fix}`, `${out}\n     fix: ${c.fix}`);
 }
 
+const APPKIT_MODIFIERS = 0x1e0000;
+const CARBON_MODIFIERS = 0x1b00;
+
+/** Missing Spotlight preferences mean macOS's enabled ⌘Space default, as in SymbolicHotKeys.swift. */
+export function spotlightHotkeyEnabled(output: string | null): boolean {
+  if (!output) return true;
+  let sawSpotlight = false;
+  // defaults' OpenStep dictionaries: each numeric entry contains at most one nested value dictionary.
+  for (const entry of output.matchAll(/"?(\d+)"?\s*=\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g)) {
+    const [, id, body] = entry;
+    if (id === '64') sawSpotlight = true;
+    if (!/\benabled\s*=\s*1\s*;/.test(body)) continue;
+    const params = body.match(/\bparameters\s*=\s*\(([^)]*)\)/)?.[1].split(',').map((s) => Number(s.trim()));
+    if (!params || params.length < 3) {
+      if (id === '64') return true;
+    } else if (params[1] === 49 && (params[2] & APPKIT_MODIFIERS) === 0x100000) return true;
+  }
+  return !sawSpotlight;
+}
+
+function defaultsString(output: string | null): string {
+  return (output ?? '').trim().replace(/^"(.*)"$/s, '$1');
+}
+
+/** Raycast's saved modifier names and virtual key code; missing means its default ⌥Space. */
+export function raycastHotkeyEnabled(output: string | null): boolean {
+  return /^(?:command|cmd)-49$/i.test(defaultsString(output));
+}
+
+/** Alfred's hotkey/prefs.plist default dictionary, with either AppKit or Carbon modifiers. */
+export function alfredHotkeyEnabled(output: string | null): boolean {
+  const key = output?.match(/\bkey\s*=\s*(\d+)\s*;/)?.[1];
+  const mod = output?.match(/\bmod\s*=\s*(\d+)\s*;/)?.[1];
+  if (key !== '49' || mod === undefined) return false;
+  const flags = Number(mod);
+  return flags <= 0xffff ? (flags & CARBON_MODIFIERS) === 0x100 : (flags & APPKIT_MODIFIERS) === 0x100000;
+}
+
+export interface HotkeyDefaults {
+  spotlight: string | null;
+  alfred: readonly (string | null)[];
+  raycast: string | null;
+  sesameHotkey: string | null;
+  sesameCommandSpace: string | null;
+}
+
+/** Pure check of saved settings, not a probe of live Carbon registrations. */
+export function hotkeyCheck(settings: HotkeyDefaults): Check {
+  const holders = [
+    ...(spotlightHotkeyEnabled(settings.spotlight) ? ['Spotlight'] : []),
+    ...(settings.alfred.some(alfredHotkeyEnabled) ? ['Alfred'] : []),
+    ...(raycastHotkeyEnabled(settings.raycast) ? ['Raycast'] : []),
+  ];
+  const stored = defaultsString(settings.sesameHotkey).match(/^(\d+):(\d+)$/);
+  const custom = stored && Number(stored[1]) <= 0xffffffff && Number(stored[2]) <= 0xffffffff
+    && !(Number(stored[1]) === 49 && Number(stored[2]) === 0x800) ? stored : null;
+  // Match HotKeyPlan.choose: custom wins; automatic mode falls back while ⌘Space is held.
+  const wantsCommandSpace = /^(?:1|true|yes)$/i.test(defaultsString(settings.sesameCommandSpace));
+  const code = custom ? Number(custom[1]) : 49;
+  const mods = custom ? Number(custom[2]) & CARBON_MODIFIERS : wantsCommandSpace && !holders.length ? 0x100 : 0xa00;
+  const active = `${mods & 0x1000 ? '⌃' : ''}${mods & 0x800 ? '⌥' : ''}${mods & 0x200 ? '⇧' : ''}${mods & 0x100 ? '⌘' : ''}${code === 49 ? 'Space' : `#${code}`}`;
+  const clash = code === 49 && mods === 0x100 && holders.length > 0;
+  const occupancy = holders.length
+    ? tr(`⌘Space 已被 ${holders.join(' / ')} 设置为热键`, `⌘Space is assigned to ${holders.join(' / ')}`)
+    : tr('Spotlight / Alfred / Raycast 均未设置 ⌘Space', '⌘Space is not assigned to Spotlight / Alfred / Raycast');
+  return {
+    name: tr('热键', 'Hot key'), level: clash ? 'warn' : 'ok',
+    detail: tr(`Sesame 使用 ${active}；${occupancy}`, `Sesame uses ${active}; ${occupancy}`),
+    ...(clash ? { fix: tr('设置 › 热键：换一个快捷键，或在占用应用的设置中关闭 ⌘Space', 'Settings › Hot key: choose another shortcut, or disable ⌘Space in the named app’s settings') } : {}),
+  };
+}
+
+async function readDefault(run: Runner, domain: string, key: string): Promise<string | null> {
+  try {
+    const result = await run('defaults', ['read', domain, key], { timeoutMs: 2000 });
+    return result.code === 0 ? result.stdout : null;
+  } catch { return null; }
+}
+
+async function readAlfredHotkeys(home: string, run: Runner): Promise<(string | null)[]> {
+  const sync = defaultsString(await readDefault(run, 'com.runningwithcrayons.Alfred-Preferences', 'syncfolder'));
+  const roots = [join(home, 'Library/Application Support/Alfred/Alfred.alfredpreferences')];
+  if (sync) roots.unshift(join(expandHome(sync, home), 'Alfred.alfredpreferences'));
+  for (const root of roots) {
+    const local = join(root, 'preferences/local');
+    let hosts: string[];
+    try { hosts = readdirSync(local); } catch { continue; }
+    const outputs = await Promise.all(hosts.map((host) => readDefault(run, join(local, host, 'hotkey/prefs'), 'default')));
+    if (outputs.some((output) => output !== null)) return outputs;
+  }
+  return [];
+}
+
 /** 最近 24 小时的错误数：logs/*.jsonl 里 layer=error 或带 error 字段的行 */
 export function countRecentErrors(logDir: string, now: Date): { errors: number; total: number; samples: string[] } {
   const since = now.getTime() - 86_400_000;
@@ -109,6 +202,15 @@ export async function collectChecks(env: DoctorEnv): Promise<Check[]> {
     detail: tr(`va 调用 ${e.total} 次，出错 ${e.errors} 次${e.samples.length ? `（${e.samples.join(' / ')}）` : ''}`, `${e.total} va runs, ${e.errors} errors${e.samples.length ? ` (${e.samples.join(' / ')})` : ''}`),
     fix: tr(`看 ${logDir}/<今天>.jsonl 里 layer=error 的行`, `look for layer=error lines in ${logDir}/<today>.jsonl`),
   });
+  // 5. 热键：只用 defaults read；不注册热键，不改系统或启动器设置。
+  const [spotlight, alfred, raycast, sesameHotkey, sesameCommandSpace] = await Promise.all([
+    readDefault(run, 'com.apple.symbolichotkeys', 'AppleSymbolicHotKeys'),
+    readAlfredHotkeys(home, run),
+    readDefault(run, 'com.raycast.macos', 'raycastGlobalHotkey'),
+    readDefault(run, 'io.github.sesame.app', 'hotKey'),
+    readDefault(run, 'io.github.sesame.app', 'commandSpace'),
+  ]);
+  add(hotkeyCheck({ spotlight, alfred, raycast, sesameHotkey, sesameCommandSpace }));
   return checks;
 }
 

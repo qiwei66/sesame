@@ -427,7 +427,7 @@ test('doctor：NO_COLOR 非空时禁用颜色，空值不禁用，非彩色输�
     for (const color of [true, false]) {
       const lines: string[] = [];
       const exitCode = await withLocale('en', () => runDoctor({
-        root, home: root, run, profile: 'sesame', now: () => new Date('2026-10-01T12:00:00Z'),
+        root, home: root, run, now: () => new Date('2026-10-01T12:00:00Z'),
         color, print: (line) => lines.push(line),
       }));
       assert.equal(exitCode, 1, 'missing index remains a failed check');

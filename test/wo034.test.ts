@@ -292,13 +292,14 @@ test('resolvePaths：make install 装的核心（有安装标记）默认把数�
   assert.equal(resolvePaths(c, tmp(), {}, '/home/tester').dataDir.startsWith(tmpdir()), true);
 });
 
-test('doctor：只报 Node / 模型 / 索引 / 错误，不报 Alfred / launchd / 签名 / Spotlight', async () => {
+test('doctor：报 Node / 模型 / 索引 / 错误 / 热键，不报旧安装形态检查', async () => {
   const root = tmp();
   writeFileSync(join(root, INSTALL_MARKER), '');
   const checks = await collectChecks({ root, appRoot: root, indexDir: join(root, 'index'), logDir: join(root, 'logs'), home: root, run: async () => ({ code: 1, stdout: '', stderr: '' }) });
   const names = checks.map((c) => c.name).join(' | ');
   assert.doesNotMatch(names, /Alfred|launchd|辅助功能|Accessibility|签名|signature|certificate|Spotlight/i);
   assert.ok(checks.some((c) => /索引|Index/.test(c.name)));
+  assert.ok(checks.some((c) => /热键|Hot key/.test(c.name)));
   const idx = checks.find((c) => /索引|Index/.test(c.name));
   assert.doesNotMatch(idx?.fix ?? '', /launchd/);
 });
